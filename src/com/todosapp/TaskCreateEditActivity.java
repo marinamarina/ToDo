@@ -17,14 +17,14 @@ import android.widget.Toast;
 import com.todosapp.DatePickerFragment;
 
 import com.todosapp.R;
-import com.todosapp.contentprovider.MyTaskContentProvider;
-import com.todosapp.contentprovider.TaskTable;
+import com.todosapp.data.MyTaskContentProvider;
+import com.todosapp.data.TaskTable;
 
 /*
  * TaskCreateEditActivity allows user to enter a new task item 
  * or to change an existing
  */
-public class TaskCreateEditActivity extends Activity {
+public class TaskCreateEditActivity extends Activity implements OnClickListener {
   private EditText descText;
   private TextView dateView;
   private Spinner priorityDropdown;
@@ -43,13 +43,8 @@ public class TaskCreateEditActivity extends Activity {
 	statusDropdown = (Spinner) findViewById(R.id.task_edit_status);
     Button confirmButton = (Button) findViewById(R.id.task_edit_button);
     
-    dateView.setOnClickListener(new OnClickListener() {	
-		@Override
-		public void onClick(View v) {
-	        	DialogFragment newFragment = new DatePickerFragment();
-	        	newFragment.show(getFragmentManager(), "datePicker");			
-		}
-	});
+    dateView.setOnClickListener(this);
+    confirmButton.setOnClickListener(this);
 
     Bundle extras = getIntent().getExtras();
     // check for extra data passed from the other activity
@@ -59,17 +54,6 @@ public class TaskCreateEditActivity extends Activity {
       fillData(taskUri);
     }
 
-    confirmButton.setOnClickListener(new View.OnClickListener() {
-      public void onClick(View view) {
-        if (TextUtils.isEmpty(descText.getText().toString())) {
-          makeToast();
-        } else {
-          setResult(RESULT_OK);
-          finish();
-        }
-      }
-
-    });
   }
 
   private void fillData(Uri uri) {
@@ -121,6 +105,27 @@ public class TaskCreateEditActivity extends Activity {
   private void makeToast() {
     Toast.makeText(TaskCreateEditActivity.this, "Description can't be empty",
         Toast.LENGTH_LONG).show();
+  }
+  /**
+	* On Click Listeners 
+    */
+  @Override
+  public void onClick(View v) {
+	  switch(v.getId()) {
+	  	case R.id.task_edit_button: 
+	  		if (TextUtils.isEmpty(descText.getText().toString())) {
+	  			makeToast();
+	  		} else {
+	  			setResult(RESULT_OK);
+	  			finish();
+	  		}
+	  		break;
+	  	case R.id.task_edit_time: 
+	  		DialogFragment newFragment = new DatePickerFragment();
+        	newFragment.show(getFragmentManager(), "datePicker");
+        	break;
+	  }
+	
   }
 } 
 

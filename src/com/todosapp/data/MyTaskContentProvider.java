@@ -1,4 +1,4 @@
-package com.todosapp.contentprovider;
+package com.todosapp.data;
 
 import java.sql.SQLException;
 import java.util.Arrays;

@@ -6,7 +6,7 @@
 
     <uses-sdk
         android:minSdkVersion="11"
-        android:targetSdkVersion="18" />
+        android:targetSdkVersion="19" />
 
     <application
         android:allowBackup="true"
@@ -27,7 +27,7 @@
         </activity>
   		<provider
 		    android:authorities="com.todosapp.contentprovider"
-      		android:name="com.todosapp.contentprovider.MyTaskContentProvider"
+      		android:name="com.todosapp.data.MyTaskContentProvider"
 			android:exported="false" >
    		</provider>
     </application>

@@ -2,24 +2,33 @@ package com.todosapp;
 
 import android.app.ListActivity;
 import android.app.LoaderManager;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
+
+//import com.todosapp.TodosOverview.MyAdapter;
 import com.todosapp.R;
-import com.todosapp.contentprovider.MyTaskContentProvider;
-import com.todosapp.contentprovider.TaskTable;
+import com.todosapp.data.MyTaskContentProvider;
+import com.todosapp.data.TaskTable;
 
 /*
  * TasksOverviewActivity displays the existing task items
@@ -104,9 +113,8 @@ public class TasksOverviewActivity extends ListActivity implements
     int[] to = new int[] { R.id.label };
 
     getLoaderManager().initLoader(0, null, this);
-    adapter = new SimpleCursorAdapter(this, R.layout.task_row, null, from,
-        to, 0);
-
+    adapter = new SimpleCursorAdapter(this, R.layout.task_row, null, from, to, 0);
+    //setListAdapter(new MyAdapter(this, android.R.layout.simple_list_item_1, R.id.label, from));
     setListAdapter(adapter);
   }
 
@@ -138,6 +146,38 @@ public class TasksOverviewActivity extends ListActivity implements
     // data is not available anymore, delete reference
     adapter.swapCursor(null);
   }
+  
+  private class MyAdapter extends ArrayAdapter<String>{
+		//public String[] strings;
+		
+		public MyAdapter(Context context, int resource, int textViewResourceId, String[] strings) {
+			super(context, resource, textViewResourceId, strings);
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			View row = inflater.inflate(R.layout.task_row, parent, false);
+			ContentResolver resolver=getContentResolver();
+			String[] items = {TaskTable.COLUMN_DESCRIPTION};
+			Cursor cursor = resolver.query(MyTaskContentProvider.CONTENT_URI, items, null, null, null);
+			Log.w("LISI", String.valueOf(cursor.getCount()));
+			
+			TextView tv=(TextView) row.findViewById(R.id.label);
+
+			if (cursor.moveToFirst()) {
+				do {
+				     
+				     String word = cursor.getString(0);
+				     tv.setText(word);
+				   } while (cursor.moveToNext());
+				}
+			cursor.close();
+					
+			return row;
+		}
+		
+	}
 
 }
 

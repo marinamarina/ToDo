@@ -1,4 +1,4 @@
-package com.todosapp.contentprovider;
+package com.todosapp.data;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
