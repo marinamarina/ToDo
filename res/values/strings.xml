@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Todos</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+	<string name="no_tasks">No tasks saved. Click Insert to add a new task</string>
+	<string name="menu_insert">Add Task</string>
+	<string name="context_menu_delete">Delete Task</string>
+	<string name="context_menu_edit">Edit Task</string>
+	<string name="context_menu_cancel">Cancel</string>
+	<string name="task_edit_hint">Enter task description here...</string>
+	<string name="task_edit_confirm">Confirm</string>
+	<string name="due_date_hint">Choose a due date</string>
+
+</resources>
