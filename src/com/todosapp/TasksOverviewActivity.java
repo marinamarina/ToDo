@@ -1,6 +1,7 @@
 package com.todosapp;
 
 import android.app.ActionBar;
+import android.app.ActionBar.OnNavigationListener;
 import android.app.ListActivity;
 import android.app.LoaderManager;
 import android.content.ContentResolver;
@@ -11,6 +12,7 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.view.ActionProvider;
 import android.support.v4.view.MenuItemCompat;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -22,10 +24,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.ArrayAdapter;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.ShareActionProvider;
 import android.widget.SimpleCursorAdapter;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 //import com.todosapp.TodosOverview.MyAdapter;
@@ -42,13 +47,14 @@ import com.todosapp.data.TaskTable;
  */
 
 public class TasksOverviewActivity extends ListActivity implements
-    LoaderManager.LoaderCallbacks<Cursor> {
+    LoaderManager.LoaderCallbacks<Cursor>, OnNavigationListener {
   private static final int DELETE_ID = Menu.FIRST + 1;
   private static final int EDIT_ID = Menu.FIRST + 2;
   private static final int CANCEL_ID = Menu.FIRST + 3;
 
   private CustomCursorAdapter adapter;
-  private ShareActionProvider mShareActionProvider;
+  private ActionProvider mShareActionProvider;
+  private String sortBy;
 
   
 /** Called when the activity is first created. */
@@ -61,6 +67,8 @@ public class TasksOverviewActivity extends ListActivity implements
     fillData();
     //http://developer.android.com/guide/topics/ui/actionbar.html#Dropdown
     
+
+    
     
     registerForContextMenu(getListView());
   }
@@ -71,9 +79,13 @@ public class TasksOverviewActivity extends ListActivity implements
     MenuInflater inflater = getMenuInflater();
     inflater.inflate(R.menu.list_menu, menu);
  // Set up ShareActionProvider's default share intent
-    //MenuItem shareItem = menu.findItem(R.id.sort);
-    //mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
-    //mShareActionProvider.setShareIntent(getDefaultIntent());
+    MenuItem shareItem = menu.findItem(R.id.sort);
+    Spinner spinnerNumber = (Spinner) shareItem.getActionView();
+
+    getActionBar().setDisplayShowTitleEnabled(false);
+    getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+    SpinnerAdapter mSpinnerAdapter = ArrayAdapter.createFromResource(this, R.array.sortBySpinnerItems, android.R.layout.simple_spinner_dropdown_item);
+    getActionBar().setListNavigationCallbacks(mSpinnerAdapter , this);
     return true;
   }
 
@@ -125,9 +137,7 @@ public class TasksOverviewActivity extends ListActivity implements
   private void fillData() {
 
     getLoaderManager().initLoader(0, null, this);
-
     adapter = new CustomCursorAdapter(getApplication(), R.layout.task_row, null, 0);
-
     setListAdapter(adapter);
   }
 
@@ -145,7 +155,7 @@ public class TasksOverviewActivity extends ListActivity implements
   public Loader<Cursor> onCreateLoader(int id, Bundle args) {
     String[] projection = { TaskTable.COLUMN_ID, TaskTable.COLUMN_DESCRIPTION, TaskTable.COLUMN_DUEDATE, TaskTable.COLUMN_PRIORITY, TaskTable.COLUMN_STATUS};
     CursorLoader cursorLoader = new CursorLoader(this,
-        MyTaskContentProvider.CONTENT_URI, projection, null, null, TaskTable.COLUMN_DESCRIPTION);
+        MyTaskContentProvider.CONTENT_URI, projection, null, null, sortBy);
     return cursorLoader;
   }
 
@@ -159,57 +169,23 @@ public class TasksOverviewActivity extends ListActivity implements
     // data is not available anymore, delete reference
     adapter.swapCursor(null);
   }
-  
-  public class CustomCursorAdapter extends CursorAdapter {
-	  
-	  private int layout;
-	  
-	  public CustomCursorAdapter (Context context, int layout, Cursor c, int flags) {
-	        super(context, c, flags);
-	        this.layout = layout;
+  	
 
-	    }
-	  @Override
-	  public View newView(Context context, Cursor cursor, ViewGroup parent) {
-		   final LayoutInflater inflater = LayoutInflater.from(context);
-	        View v = inflater.inflate(layout, parent, false);
-	        Cursor c = getCursor();
-	 
-	        
-	 
-	        return v;
-	   
-	  }
-	  @Override
-	  public void bindView(View view, Context context, Cursor cursor) {
-	  
-	   if(cursor.getPosition()%2==1) {
-	    view.setBackgroundColor(context.getResources().getColor(R.color.white));
-	   }
-	   else {
-	    view.setBackgroundColor(context.getResources().getColor(R.color.lightgrey));
-	   }
-	  
-	   int descCol = cursor.getColumnIndex(TaskTable.COLUMN_DESCRIPTION);
-       int nameCol1 = cursor.getColumnIndex(TaskTable.COLUMN_STATUS);
-       String desc = cursor.getString(descCol);
-       String name1 = cursor.getString(nameCol1);
-
-       /**
-        * Next set the name of the entry.
-        */    
-       TextView desc_text = (TextView) view.findViewById(R.id.label);
-       TextView name_text1 = (TextView) view.findViewById(R.id.second_label);
-       if (desc_text != null) {
-           desc_text.setText(desc);
-          name_text1.setText(name1);
-       }
-	  
-	  }
-	  
-	 
-	  
-	 }
+@Override
+public boolean onNavigationItemSelected(int arg0, long arg1) {
+	// TODO Auto-generated method stub
+	switch(arg0) {
+	case 1 : 
+		sortBy = TaskTable.COLUMN_DUEDATE;
+		//fillData();
+	return true;
+	case 2 : 
+		sortBy = TaskTable.COLUMN_DESCRIPTION;
+		//fillData();
+		return true;
+	}
+	return false;
+}
 
 }
 

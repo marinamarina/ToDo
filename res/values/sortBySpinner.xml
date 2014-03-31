@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="sortBySpinnerItems">
+        <item >description</item>
+        <item >due date</item>
+        <item >priority</item>
+    </string-array>
+    
+</resources>
