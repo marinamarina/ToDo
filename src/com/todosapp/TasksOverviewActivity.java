@@ -132,7 +132,7 @@ public class TasksOverviewActivity extends ListActivity implements
   // Creates a new loader after the initLoader () call
   @Override
   public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-    String[] projection = { TaskTable.COLUMN_ID, TaskTable.COLUMN_DESCRIPTION };
+    String[] projection = { TaskTable.COLUMN_ID, TaskTable.COLUMN_DESCRIPTION, TaskTable.COLUMN_DUEDATE, TaskTable.COLUMN_PRIORITY, TaskTable.COLUMN_STATUS};
     CursorLoader cursorLoader = new CursorLoader(this,
         MyTaskContentProvider.CONTENT_URI, projection, null, null, null);
     return cursorLoader;
@@ -151,36 +151,20 @@ public class TasksOverviewActivity extends ListActivity implements
   
   public class CustomCursorAdapter extends CursorAdapter {
 	  
-	  private Context context;
-	   private int layout;
+	  private int layout;
 	  
 	  public CustomCursorAdapter (Context context, int layout, Cursor c, int flags) {
 	        super(context, c, flags);
-	        this.context = context;
 	        this.layout = layout;
 
 	    }
 	  @Override
 	  public View newView(Context context, Cursor cursor, ViewGroup parent) {
 		   final LayoutInflater inflater = LayoutInflater.from(context);
-	        View v = inflater.inflate(R.layout.task_row, parent, false);
+	        View v = inflater.inflate(layout, parent, false);
 	        Cursor c = getCursor();
 	 
-	        int nameCol = c.getColumnIndex(TaskTable.COLUMN_DESCRIPTION);
-	        //int nameCol1 = c.getColumnIndex(TaskTable.COLUMN_PRIORITY);
-	 
-	        String name = c.getString(nameCol);
-	        //String name1 = c.getString(nameCol1);
-	 
-	        /**
-	         * Next set the name of the entry.
-	         */    
-	        TextView name_text = (TextView) v.findViewById(R.id.label);
-	        //TextView name_text1 = (TextView) v.findViewById(R.id.second_label);
-	        if (name_text != null) {
-	            name_text.setText(name);
-	           // name_text1.setText(name1);
-	        }
+	        
 	 
 	        return v;
 	   
@@ -195,16 +179,19 @@ public class TasksOverviewActivity extends ListActivity implements
 	    view.setBackgroundColor(context.getResources().getColor(R.color.lightgrey));
 	   }
 	  
-	   int nameCol = cursor.getColumnIndex(TaskTable.COLUMN_DESCRIPTION);
-	   
-       String name = cursor.getString(nameCol);
+	   int descCol = cursor.getColumnIndex(TaskTable.COLUMN_DESCRIPTION);
+       int nameCol1 = cursor.getColumnIndex(TaskTable.COLUMN_STATUS);
+       String desc = cursor.getString(descCol);
+       String name1 = cursor.getString(nameCol1);
 
        /**
         * Next set the name of the entry.
         */    
-       TextView name_text = (TextView) view.findViewById(R.id.label);
-       if (name_text != null) {
-           name_text.setText(name);
+       TextView desc_text = (TextView) view.findViewById(R.id.label);
+       TextView name_text1 = (TextView) view.findViewById(R.id.second_label);
+       if (desc_text != null) {
+           desc_text.setText(desc);
+          name_text1.setText(name1);
        }
 	  
 	  }

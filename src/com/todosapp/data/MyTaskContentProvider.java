@@ -177,7 +177,7 @@ public class MyTaskContentProvider extends ContentProvider {
 	  }
 
 	  private void checkColumns(String[] projection) {
-	    String[] available = { TaskTable.COLUMN_DESCRIPTION,
+	    String[] available = { TaskTable.COLUMN_DUEDATE, TaskTable.COLUMN_PRIORITY, TaskTable.COLUMN_STATUS, TaskTable.COLUMN_DESCRIPTION,
 	        TaskTable.COLUMN_ID };
 	    if (projection != null) {
 	      HashSet<String> requestedColumns = new HashSet<String>(Arrays.asList(projection));
