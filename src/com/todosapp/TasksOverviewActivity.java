@@ -1,5 +1,6 @@
 package com.todosapp;
 
+import android.app.ActionBar;
 import android.app.ListActivity;
 import android.app.LoaderManager;
 import android.content.ContentResolver;
@@ -10,6 +11,7 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -22,6 +24,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
+import android.widget.ShareActionProvider;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
@@ -43,9 +46,9 @@ public class TasksOverviewActivity extends ListActivity implements
   private static final int DELETE_ID = Menu.FIRST + 1;
   private static final int EDIT_ID = Menu.FIRST + 2;
   private static final int CANCEL_ID = Menu.FIRST + 3;
-  // private Cursor cursor;
-  private SimpleCursorAdapter adapter;
-  private CustomCursorAdapter newadapter;
+
+  private CustomCursorAdapter adapter;
+  private ShareActionProvider mShareActionProvider;
 
   
 /** Called when the activity is first created. */
@@ -56,6 +59,9 @@ public class TasksOverviewActivity extends ListActivity implements
     setContentView(R.layout.task_list);
     this.getListView().setDividerHeight(2);
     fillData();
+    //http://developer.android.com/guide/topics/ui/actionbar.html#Dropdown
+    
+    
     registerForContextMenu(getListView());
   }
 
@@ -64,6 +70,10 @@ public class TasksOverviewActivity extends ListActivity implements
   public boolean onCreateOptionsMenu(Menu menu) {
     MenuInflater inflater = getMenuInflater();
     inflater.inflate(R.menu.list_menu, menu);
+ // Set up ShareActionProvider's default share intent
+    //MenuItem shareItem = menu.findItem(R.id.sort);
+    //mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
+    //mShareActionProvider.setShareIntent(getDefaultIntent());
     return true;
   }
 
@@ -74,6 +84,9 @@ public class TasksOverviewActivity extends ListActivity implements
     case R.id.insert:
       createTask();
       return true;
+    case R.id.sort:
+    	sortBy();
+    	return true;
     }
     return super.onOptionsItemSelected(item);
   }
@@ -105,19 +118,17 @@ public class TasksOverviewActivity extends ListActivity implements
     Intent intent = new Intent(this, TaskCreateEditActivity.class);
     startActivity(intent);
   }
+  private void sortBy() {
+	  
+  }
 
   private void fillData() {
-    // Fields from the database (projection)
-    // Must include the _id column for the adapter to work
-    String[] from = new String[] { TaskTable.COLUMN_DESCRIPTION };
-    // Fields on the UI to which we map
-    int[] to = new int[] { R.id.label };
 
     getLoaderManager().initLoader(0, null, this);
-    //adapter = new SimpleCursorAdapter(this, R.layout.task_row, null, from, to, 0);
-    newadapter = new CustomCursorAdapter(getApplication(), R.layout.task_row, null, 0);
-    //setListAdapter(new MyAdapter(this, android.R.layout.simple_list_item_1, R.id.label, from));
-    setListAdapter(newadapter);
+
+    adapter = new CustomCursorAdapter(getApplication(), R.layout.task_row, null, 0);
+
+    setListAdapter(adapter);
   }
 
   @Override
@@ -134,19 +145,19 @@ public class TasksOverviewActivity extends ListActivity implements
   public Loader<Cursor> onCreateLoader(int id, Bundle args) {
     String[] projection = { TaskTable.COLUMN_ID, TaskTable.COLUMN_DESCRIPTION, TaskTable.COLUMN_DUEDATE, TaskTable.COLUMN_PRIORITY, TaskTable.COLUMN_STATUS};
     CursorLoader cursorLoader = new CursorLoader(this,
-        MyTaskContentProvider.CONTENT_URI, projection, null, null, null);
+        MyTaskContentProvider.CONTENT_URI, projection, null, null, TaskTable.COLUMN_DESCRIPTION);
     return cursorLoader;
   }
 
   @Override
   public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-    newadapter.swapCursor(data);
+    adapter.swapCursor(data);
   }
 
   @Override
   public void onLoaderReset(Loader<Cursor> loader) {
     // data is not available anymore, delete reference
-    newadapter.swapCursor(null);
+    adapter.swapCursor(null);
   }
   
   public class CustomCursorAdapter extends CursorAdapter {

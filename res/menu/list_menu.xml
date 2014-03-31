@@ -4,5 +4,11 @@
         android:id="@+id/insert"
         android:showAsAction="always"
         android:title="Insert">
-    </item>    
+    </item>
+     <item
+        android:id="@+id/sort"
+        android:showAsAction="always"
+        android:actionProviderClass="android.support.v7.widget.ShareActionProvider"
+        android:title="Sort by">
+    </item>   
 </menu>
