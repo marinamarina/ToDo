@@ -20,7 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.ArrayAdapter;
+import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
@@ -45,6 +45,7 @@ public class TasksOverviewActivity extends ListActivity implements
   private static final int CANCEL_ID = Menu.FIRST + 3;
   // private Cursor cursor;
   private SimpleCursorAdapter adapter;
+  private CustomCursorAdapter newadapter;
 
   
 /** Called when the activity is first created. */
@@ -113,9 +114,10 @@ public class TasksOverviewActivity extends ListActivity implements
     int[] to = new int[] { R.id.label };
 
     getLoaderManager().initLoader(0, null, this);
-    adapter = new SimpleCursorAdapter(this, R.layout.task_row, null, from, to, 0);
+    //adapter = new SimpleCursorAdapter(this, R.layout.task_row, null, from, to, 0);
+    newadapter = new CustomCursorAdapter(getApplication(), R.layout.task_row, null, 0);
     //setListAdapter(new MyAdapter(this, android.R.layout.simple_list_item_1, R.id.label, from));
-    setListAdapter(adapter);
+    setListAdapter(newadapter);
   }
 
   @Override
@@ -138,46 +140,78 @@ public class TasksOverviewActivity extends ListActivity implements
 
   @Override
   public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-    adapter.swapCursor(data);
+    newadapter.swapCursor(data);
   }
 
   @Override
   public void onLoaderReset(Loader<Cursor> loader) {
     // data is not available anymore, delete reference
-    adapter.swapCursor(null);
+    newadapter.swapCursor(null);
   }
   
-  private class MyAdapter extends ArrayAdapter<String>{
-		//public String[] strings;
-		
-		public MyAdapter(Context context, int resource, int textViewResourceId, String[] strings) {
-			super(context, resource, textViewResourceId, strings);
-		}
+  public class CustomCursorAdapter extends CursorAdapter {
+	  
+	  private Context context;
+	   private int layout;
+	  
+	  public CustomCursorAdapter (Context context, int layout, Cursor c, int flags) {
+	        super(context, c, flags);
+	        this.context = context;
+	        this.layout = layout;
 
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			View row = inflater.inflate(R.layout.task_row, parent, false);
-			ContentResolver resolver=getContentResolver();
-			String[] items = {TaskTable.COLUMN_DESCRIPTION};
-			Cursor cursor = resolver.query(MyTaskContentProvider.CONTENT_URI, items, null, null, null);
-			Log.w("LISI", String.valueOf(cursor.getCount()));
-			
-			TextView tv=(TextView) row.findViewById(R.id.label);
+	    }
+	  @Override
+	  public View newView(Context context, Cursor cursor, ViewGroup parent) {
+		   final LayoutInflater inflater = LayoutInflater.from(context);
+	        View v = inflater.inflate(R.layout.task_row, parent, false);
+	        Cursor c = getCursor();
+	 
+	        int nameCol = c.getColumnIndex(TaskTable.COLUMN_DESCRIPTION);
+	        //int nameCol1 = c.getColumnIndex(TaskTable.COLUMN_PRIORITY);
+	 
+	        String name = c.getString(nameCol);
+	        //String name1 = c.getString(nameCol1);
+	 
+	        /**
+	         * Next set the name of the entry.
+	         */    
+	        TextView name_text = (TextView) v.findViewById(R.id.label);
+	        //TextView name_text1 = (TextView) v.findViewById(R.id.second_label);
+	        if (name_text != null) {
+	            name_text.setText(name);
+	           // name_text1.setText(name1);
+	        }
+	 
+	        return v;
+	   
+	  }
+	  @Override
+	  public void bindView(View view, Context context, Cursor cursor) {
+	  
+	   if(cursor.getPosition()%2==1) {
+	    view.setBackgroundColor(context.getResources().getColor(R.color.white));
+	   }
+	   else {
+	    view.setBackgroundColor(context.getResources().getColor(R.color.lightgrey));
+	   }
+	  
+	   int nameCol = cursor.getColumnIndex(TaskTable.COLUMN_DESCRIPTION);
+	   
+       String name = cursor.getString(nameCol);
 
-			if (cursor.moveToFirst()) {
-				do {
-				     
-				     String word = cursor.getString(0);
-				     tv.setText(word);
-				   } while (cursor.moveToNext());
-				}
-			cursor.close();
-					
-			return row;
-		}
-		
-	}
+       /**
+        * Next set the name of the entry.
+        */    
+       TextView name_text = (TextView) view.findViewById(R.id.label);
+       if (name_text != null) {
+           name_text.setText(name);
+       }
+	  
+	  }
+	  
+	 
+	  
+	 }
 
 }
 
