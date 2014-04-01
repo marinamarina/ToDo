@@ -1,10 +1,11 @@
 package com.todosapp;
 
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.ActionBar.OnNavigationListener;
 import android.app.ListActivity;
 import android.app.LoaderManager;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
@@ -13,30 +14,23 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.ActionProvider;
-import android.support.v4.view.MenuItemCompat;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
-import android.widget.CursorAdapter;
-import android.widget.ListView;
-import android.widget.ShareActionProvider;
-import android.widget.SimpleCursorAdapter;
+import android.widget.SearchView;
+import android.widget.SearchView.OnQueryTextListener;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
-import android.widget.TextView;
 
-//import com.todosapp.TodosOverview.MyAdapter;
-import com.todosapp.R;
 import com.todosapp.data.MyTaskContentProvider;
 import com.todosapp.data.TaskTable;
+//import com.todosapp.TodosOverview.MyAdapter;
 
 /*
  * TasksOverviewActivity displays the existing task items
@@ -46,15 +40,17 @@ import com.todosapp.data.TaskTable;
  * You can delete / edit existing ones via a long press on the item
  */
 
+@TargetApi(19)
 public class TasksOverviewActivity extends ListActivity implements
-    LoaderManager.LoaderCallbacks<Cursor>, OnNavigationListener {
+    LoaderManager.LoaderCallbacks<Cursor>, OnNavigationListener, OnQueryTextListener {
   private static final int DELETE_ID = Menu.FIRST + 1;
   private static final int EDIT_ID = Menu.FIRST + 2;
   private static final int CANCEL_ID = Menu.FIRST + 3;
 
   private CustomCursorAdapter adapter;
-  private ActionProvider mShareActionProvider;
   private String sortBy;
+  private SearchView mSearchView;
+  private String mCurFilter;
 
   
 /** Called when the activity is first created. */
@@ -86,7 +82,31 @@ public class TasksOverviewActivity extends ListActivity implements
     getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
     SpinnerAdapter mSpinnerAdapter = ArrayAdapter.createFromResource(this, R.array.sortBySpinnerItems, android.R.layout.simple_spinner_dropdown_item);
     getActionBar().setListNavigationCallbacks(mSpinnerAdapter , this);
+    
+    MenuItem item = menu.add("Search");
+    item.setIcon(android.R.drawable.ic_menu_search);
+    item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM
+            | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
+    mSearchView = new MySearchView(this);
+    mSearchView.setOnQueryTextListener(this);
+    //mSearchView.setOnCloseListener( this);
+    mSearchView.setIconifiedByDefault(true);
+    item.setActionView(mSearchView);
     return true;
+  }
+  public static class MySearchView extends SearchView {
+      public MySearchView(Context context) {
+          super(context);
+      }
+
+      // The normal SearchView doesn't clear its search text when
+      // collapsed, so we will do this for it.
+      @SuppressLint("NewApi")
+	@Override
+      public void onActionViewCollapsed() {
+          setQuery("", false);
+          super.onActionViewCollapsed();
+      }
   }
 
   // Reaction to the menu selection
@@ -175,17 +195,56 @@ public class TasksOverviewActivity extends ListActivity implements
 public boolean onNavigationItemSelected(int arg0, long arg1) {
 	// TODO Auto-generated method stub
 	switch(arg0) {
+	case 0 : 
+		sortBy = TaskTable.COLUMN_DESCRIPTION;
+		 getLoaderManager().restartLoader(0, null, this);
+	return true;
 	case 1 : 
 		sortBy = TaskTable.COLUMN_DUEDATE;
-		//fillData();
-	return true;
+		 getLoaderManager().restartLoader(0, null, this);
+		return true;
 	case 2 : 
-		sortBy = TaskTable.COLUMN_DESCRIPTION;
-		//fillData();
+		sortBy = TaskTable.COLUMN_PRIORITY;
+		 getLoaderManager().restartLoader(0, null, this);
 		return true;
 	}
 	return false;
 }
+
+@Override
+public boolean onQueryTextChange(String arg0) {
+	// Called when the action bar search text has changed.  Update
+    // the search filter, and restart the loader to do a new query
+    // with this filter.
+    String newFilter = !TextUtils.isEmpty("") ? "" : null;
+    // Don't do anything if the filter hasn't actually changed.
+    // Prevents restarting the loader when restoring state.
+    if (mCurFilter == null && newFilter == null) {
+        return true;
+    }
+    if (mCurFilter != null && mCurFilter.equals(newFilter)) {
+        return true;
+    }
+    mCurFilter = newFilter;
+    getLoaderManager().restartLoader(0, null, this);
+    return true;
+}
+
+@Override
+public boolean onQueryTextSubmit(String arg0) {
+	// TODO Auto-generated method stub
+	return false;
+}
+
+//@Override
+//public void onClose(IOException e) {
+//	if (!TextUtils.isEmpty(mSearchView.getQuery())) {
+//        mSearchView.setQuery(null, true);
+//    }
+//    //return true;
+//	
+//	
+//}
 
 }
 
