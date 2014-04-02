@@ -2,7 +2,8 @@
 <resources>
      <string-array name="status">
         <item>Choose status&#8230;</item>
-        <item >Done</item>
+        <item >Not started</item>
         <item >In progress</item>
+        <item>Completed</item>
     </string-array>
 </resources>

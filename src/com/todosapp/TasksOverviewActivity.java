@@ -47,7 +47,7 @@ public class TasksOverviewActivity extends ListActivity implements
   private static final int CANCEL_ID = Menu.FIRST + 3;
 
   private CustomCursorAdapter adapter;
-  private String sortBy;
+  public static String sortBy = "";
   private SearchView mSearchView;
   private String mCurFilter;
   AlertDialog levelDialog;
@@ -168,7 +168,8 @@ public class TasksOverviewActivity extends ListActivity implements
 	      				  		sortBy= TaskTable.COLUMN_DUEDATE;
                              break;
 	      				  	case 2:
-	      				  	sortBy= TaskTable.COLUMN_PRIORITY;
+	      				  	//reverse sort order
+	      				  	sortBy= TaskTable.COLUMN_PRIORITY + " DESC";
                              break;
 	      			}
                   levelDialog.dismiss(); 

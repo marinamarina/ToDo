@@ -1,7 +1,9 @@
 package com.todosapp.data;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,10 +13,13 @@ import android.widget.TextView;
 import com.todosapp.R;
 import com.todosapp.R.color;
 import com.todosapp.R.id;
+import com.todosapp.TasksOverviewActivity;
 
 public class CustomCursorAdapter extends CursorAdapter {
 	  
 	  private int layout;
+	  private TextView labelEl;
+	  private TextView secondLabelEl;
 	  
 	  public CustomCursorAdapter (Context context, int layout, Cursor c, int flags) {
 	        super(context, c, flags);
@@ -29,31 +34,46 @@ public class CustomCursorAdapter extends CursorAdapter {
 	        return v;
 	   
 	  }
-	  @Override
+	  @SuppressLint("DefaultLocale")
+	@Override
 	  public void bindView(View view, Context context, Cursor cursor) {
-	  
+		  labelEl = (TextView) view.findViewById(R.id.label);
+		  secondLabelEl = (TextView) view.findViewById(R.id.second_label);
+		  
 	   if(cursor.getPosition()%2==1) {
 	    view.setBackgroundColor(context.getResources().getColor(R.color.white));
 	   }
 	   else {
 	    view.setBackgroundColor(context.getResources().getColor(R.color.lightgrey));
 	   }
-	  
-	   int descCol = cursor.getColumnIndex(TaskTable.COLUMN_DESCRIPTION);
-     int statusCol = cursor.getColumnIndex(TaskTable.COLUMN_STATUS);
-     String desc = cursor.getString(descCol);
-     String status = cursor.getString(statusCol);
+	     
+	   
+	   String todoDescription = cursor.getString(cursor.getColumnIndex(TaskTable.COLUMN_DESCRIPTION));
+	   
+	   //Feeding the first text field with the todo description
+	   if (todoDescription != null) {
+	       labelEl.setText(todoDescription); 
+	    }
+	   //Feeding the second text field with the data 
+	   //depending on a sort order
+	   if(TasksOverviewActivity.sortBy!="") {
+		   String sortBy_lc=TasksOverviewActivity.sortBy.toLowerCase();
+		   int secondLabelIndex;
+		   
+		   if(sortBy_lc.contains("description")) {
+			   Log.w("LISI", "descr");
+		   } else if (sortBy_lc.contains("date")) {
+			   secondLabelIndex=cursor.getColumnIndex(TasksOverviewActivity.sortBy);
+			   String status = "Completion date: " + cursor.getString(secondLabelIndex);
+			   secondLabelEl.setText(status);
+		   } else if ((sortBy_lc.contains("priority"))) {
+			   secondLabelIndex=cursor.getColumnIndex(TaskTable.COLUMN_PRIORITY);
+			   String status = "Priority: " + cursor.getString(secondLabelIndex);
+			   secondLabelEl.setText(status);
+		   }
+		   
+	   }
 
-     /**
-      * Next set the name of the entry.
-      */    
-     TextView desc_text = (TextView) view.findViewById(R.id.label);
-     TextView name_text1 = (TextView) view.findViewById(R.id.second_label);
-     if (desc_text != null) {
-         desc_text.setText(desc);
-        name_text1.setText(status);
-     }
-	  
 	  }
 	  
 	 }
