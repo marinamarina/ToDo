@@ -36,10 +36,11 @@ public final class R {
         public static final int icon_fix=0x7f020002;
     }
     public static final class id {
-        public static final int action_settings=0x7f0a000a;
+        public static final int action_settings=0x7f0a000b;
         public static final int imageView1=0x7f0a0005;
         public static final int insert=0x7f0a0008;
         public static final int label=0x7f0a0006;
+        public static final int search=0x7f0a000a;
         public static final int second_label=0x7f0a0007;
         public static final int sort=0x7f0a0009;
         public static final int task_edit_button=0x7f0a0004;

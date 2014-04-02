@@ -1,4 +1,4 @@
-package com.todosapp;
+package com.todosapp.data;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -8,7 +8,9 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
-import com.todosapp.data.TaskTable;
+import com.todosapp.R;
+import com.todosapp.R.color;
+import com.todosapp.R.id;
 
 public class CustomCursorAdapter extends CursorAdapter {
 	  
