@@ -12,5 +12,6 @@
 	<string name="task_edit_hint">Enter task description here...</string>
 	<string name="task_edit_confirm">Confirm</string>
 	<string name="due_date_hint">Choose a due date</string>
+	<string name="todo">TODO</string>
 
 </resources>

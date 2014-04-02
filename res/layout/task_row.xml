@@ -10,12 +10,12 @@
         android:id="@+id/imageView1"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:src="@drawable/check5" />
+        android:src="@drawable/check5" android:contentDescription="TODO"/>
 
-    <LinearLayout
+  <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:contentDescription="TODO"
+        android:contentDescription="@string/todo"
         android:orientation="vertical" >
 
         <TextView
@@ -39,6 +39,15 @@
             android:textColorHint="@color/text"
             android:textSize="12sp" />
 
+     
     </LinearLayout>
+
+<TextView
+    android:id="@+id/second_label1"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="16dp"
+    android:layout_weight="0.51"
+    android:background="@layout/square" />
 
 </LinearLayout>

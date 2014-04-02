@@ -36,13 +36,14 @@ public final class R {
         public static final int icon_fix=0x7f020002;
     }
     public static final class id {
-        public static final int action_settings=0x7f0a000b;
+        public static final int action_settings=0x7f0a000c;
         public static final int imageView1=0x7f0a0005;
-        public static final int insert=0x7f0a0008;
+        public static final int insert=0x7f0a0009;
         public static final int label=0x7f0a0006;
-        public static final int search=0x7f0a000a;
+        public static final int search=0x7f0a000b;
         public static final int second_label=0x7f0a0007;
-        public static final int sort=0x7f0a0009;
+        public static final int second_label1=0x7f0a0008;
+        public static final int sort=0x7f0a000a;
         public static final int task_edit_button=0x7f0a0004;
         public static final int task_edit_description=0x7f0a0000;
         public static final int task_edit_priority=0x7f0a0002;
@@ -50,9 +51,10 @@ public final class R {
         public static final int task_edit_time=0x7f0a0001;
     }
     public static final class layout {
-        public static final int task_edit=0x7f030000;
-        public static final int task_list=0x7f030001;
-        public static final int task_row=0x7f030002;
+        public static final int square=0x7f030000;
+        public static final int task_edit=0x7f030001;
+        public static final int task_list=0x7f030002;
+        public static final int task_row=0x7f030003;
     }
     public static final class menu {
         public static final int list_menu=0x7f090000;
@@ -70,6 +72,7 @@ public final class R {
         public static final int no_tasks=0x7f070003;
         public static final int task_edit_confirm=0x7f070009;
         public static final int task_edit_hint=0x7f070008;
+        public static final int todo=0x7f07000b;
     }
     public static final class style {
         /** 
