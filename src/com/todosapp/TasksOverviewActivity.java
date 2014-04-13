@@ -3,9 +3,9 @@ package com.todosapp;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ListActivity;
 import android.app.LoaderManager;
-import android.app.SearchManager;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
@@ -22,19 +22,18 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.SearchView;
-import android.widget.SearchView.OnQueryTextListener;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.Button;
 
 import com.todosapp.data.CustomCursorAdapter;
 import com.todosapp.data.MyTaskContentProvider;
 import com.todosapp.data.TaskTable;
 
 /*
- * TasksOverviewActivity displays the existing task items
- * in a list
+ * TasksOverviewActivity displays the existing task items in a list
  * 
  * You can create new ones via the ActionBar entry "Insert"
  * You can delete / edit existing ones via a long press on the item
@@ -42,16 +41,28 @@ import com.todosapp.data.TaskTable;
 
 @TargetApi(19)
 public class TasksOverviewActivity extends ListActivity implements
-    LoaderManager.LoaderCallbacks<Cursor>, OnQueryTextListener {
+    LoaderManager.LoaderCallbacks<Cursor> {
   private static final int DELETE_ID = Menu.FIRST + 1;
   private static final int EDIT_ID = Menu.FIRST + 2;
   private static final int CANCEL_ID = Menu.FIRST + 3;
 
   private CustomCursorAdapter adapter;
-  public static String sortBy = "";
-  private SearchView mSearchView;
-  private String mCurFilter;
   AlertDialog levelDialog;
+  public static String sortBy = "";
+  public static Cursor searchCursor;
+  String searchString = "";
+  String searchString1 = "1";
+  String searchString2 = "In progress";
+  Uri uri = MyTaskContentProvider.CONTENT_URI;
+  String[] projection = { TaskTable.COLUMN_ID, TaskTable.COLUMN_DESCRIPTION, TaskTable.COLUMN_DUEDATE, TaskTable.COLUMN_PRIORITY, TaskTable.COLUMN_STATUS};
+  String  selection = TaskTable.COLUMN_DESCRIPTION + " LIKE ?" 
+		  			  + " AND " + TaskTable.COLUMN_PRIORITY + "=?"
+		  			  + " AND " + TaskTable.COLUMN_STATUS   + "=?";
+  // Moves the user's input string to the selection arguments.
+  String[] selectionArgs = {"%" + searchString + "%", searchString1, searchString2};
+  
+  
+  
 
   
 /** Called when the activity is first created. */
@@ -61,7 +72,8 @@ public class TasksOverviewActivity extends ListActivity implements
     super.onCreate(savedInstanceState);
     setContentView(R.layout.task_list);
     this.getListView().setDividerHeight(2);
-    fillData();
+    initLoader();
+    fillData(null);
     //http://developer.android.com/guide/topics/ui/actionbar.html#Dropdown
    
     registerForContextMenu(getListView());
@@ -71,28 +83,6 @@ public class TasksOverviewActivity extends ListActivity implements
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     new MenuInflater(this).inflate(R.menu.list_menu, menu);
- // Set up ShareActionProvider's default share intent
-//    MenuItem shareItem = menu.findItem(R.id.sort);
-//    Spinner spinnerNumber = (Spinner) shareItem.getActionView();
-//
-//    getActionBar().setDisplayShowTitleEnabled(false);
-//    getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-//    SpinnerAdapter mSpinnerAdapter = ArrayAdapter.createFromResource(this, R.array.sortBySpinnerItems, android.R.layout.simple_spinner_dropdown_item);
-//    getActionBar().setListNavigationCallbacks(mSpinnerAdapter , this);
-//    
-//    MenuItem item = menu.add("Search");
-//    item.setIcon(android.R.drawable.ic_menu_search);
-//    item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM
-//            | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
-//    mSearchView = new MySearchView(this);
-//    mSearchView.setOnQueryTextListener(this);
-//    //mSearchView.setOnCloseListener( this);
-//    mSearchView.setIconifiedByDefault(true);
-//    item.setActionView(mSearchView);
-    
-    //SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-    //SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
-    //searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
     return true;
   }
   @Override
@@ -104,22 +94,25 @@ public class TasksOverviewActivity extends ListActivity implements
     menu.add(0, CANCEL_ID, 0, R.string.context_menu_cancel);
 
   }
-//Reaction to the menu selection
- @Override
- public boolean onOptionsItemSelected(MenuItem item) {
-   switch (item.getItemId()) {
-   case R.id.insert:
-     createTask();
-     return true;
-   case R.id.sort:
-   	sortBy();
-   	return true;
-   case R.id.search:
-	 search();
-	 return true;
-   }   
-   return super.onOptionsItemSelected(item);
- }
+  /** Select an item from the action bar menu */
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()) {
+    case R.id.insert:
+      createTask();
+      return true;
+    case R.id.sort:
+    	sortBy();
+    	return true;
+    case R.id.search:
+ 	 search();
+ 	 return true;
+    case R.id.all:
+ 		 view_all();
+ 		 return true;
+    }   
+    return super.onOptionsItemSelected(item);
+  }
 
 @Override
  public boolean onContextItemSelected(MenuItem item) {
@@ -144,20 +137,6 @@ public class TasksOverviewActivity extends ListActivity implements
    }
    return super.onContextItemSelected(item);
  }
-  public static class MySearchView extends SearchView {
-      public MySearchView(Context context) {
-          super(context);
-      }
-
-      // The normal SearchView doesn't clear its search text when
-      // collapsed, so we will do this for it.
-      @SuppressLint("NewApi")
-	@Override
-      public void onActionViewCollapsed() {
-          setQuery("", false);
-          super.onActionViewCollapsed();
-      }
-  }
 
   private void createTask() {
     Intent intent = new Intent(this, TaskCreateEditActivity.class);
@@ -182,54 +161,80 @@ public class TasksOverviewActivity extends ListActivity implements
                              break;
 	      			}
                   levelDialog.dismiss(); 
-                  restartLoader();
+                  if (searchCursor==null) { 
+                	  restartLoader();
+                  } else {
+                	  //recreating the cursor in order to "pick up" the updated sorting order
+                	  searchCursor=getContentResolver().query(uri, projection, selection, selectionArgs, sortBy);
+                	  fillData(searchCursor);
+                	  
+                  }
                   }
               });
        levelDialog = builder.create();
        levelDialog.show();
   }
   private void search() {
-	  String searchString = "Feed ";
-	  Uri uri = Uri.parse(MyTaskContentProvider.CONTENT_TYPE);
-	  String[] projection = { TaskTable.COLUMN_ID, TaskTable.COLUMN_DESCRIPTION, TaskTable.COLUMN_DUEDATE, TaskTable.COLUMN_PRIORITY, TaskTable.COLUMN_STATUS};
-	  String selection = TaskTable.COLUMN_PRIORITY + " = '"
-		        + ("2") + "'";
-	  String[] selectionArgs = null;
-	  String sortOrder = TaskTable.COLUMN_DESCRIPTION;
 	  
-	  if (TextUtils.isEmpty(searchString)) {
-		    // Setting the selection clause to null will return all words
-		    selection = null;
-		    selectionArgs[0] = "";
+	  //Create a search dialog
+	  final Dialog dialog = new Dialog(this);
+      dialog.setTitle("Search by the criteria...");
 
-		} else {
-		    // Constructs a selection clause that matches the word that the user entered.
-		    selection = TaskTable.COLUMN_PRIORITY + " IN  ( 2, 5 )";
+      //set dialog message
+   			dialog.setContentView(R.layout.search_dialog);
+   			dialog.setTitle("Search...");
+   			final EditText search_description = (EditText) dialog.findViewById(R.id.todos_search_description);
+			Spinner priorityDropdown = (Spinner) dialog.findViewById(R.id.todos_search_priority);
+			Button db = (Button) dialog.findViewById(R.id.todos_search_button);
+			Button db1 = (Button) dialog.findViewById(R.id.todos_search_cancel_button);
+			
+			
+   						db.setOnClickListener(new OnClickListener() {
+   							@Override
+   							public void onClick(View v) {
+   								if (TextUtils.isEmpty(searchString)) {
+   							    //Setting the selection clause to null will return all words
+   							   searchString = "";
 
-		    // Moves the user's input string to the selection arguments.
-		    //selectionArgs[0] = searchString;
-
-		}
-	  	  
-	  getContentResolver().query(uri, projection, selection, selectionArgs, sortOrder);  
-	  
-	  //if(cursor==null) {
-		  //Log.w("LISI", "null");
-	  //} else if (cursor.getCount() < 1) {
-		//  Log.w("LISI", "unsuccessful");
-	  //} else {
-		 //cursor.moveToFirst();
+   							} else {
+   							    // Constructs a selection clause that matches the word that the user entered.
+   								searchString = search_description.getText().toString();
+   					   			
+   							}
+   								
+   								Log.w("LISI", searchString+" "+selectionArgs[0]);
+   								searchCursor=getContentResolver().query(uri, projection, selection, selectionArgs, sortBy);
+   		   						fillData(searchCursor);
+   								dialog.dismiss();
+   							}
+   						});
+   						db1.setOnClickListener(new OnClickListener() {
+   							@Override
+   							public void onClick(View v) {
+   								
+   								dialog.dismiss();
+   							}
+   						});
+   			 
+   						dialog.show();
+   				 
+	  if(searchCursor==null) {
+		  Log.w("LISI", "null");
+	  } else if (searchCursor.getCount() < 1) {
+		  Log.w("LISI", "unsuccessful");
+	  } else {
+		 // searchCursor.moveToFirst();
+		  //Log.w("LISI", String.valueOf(searchCursor.getCount()));
 		  
-		  //Log.w("LISI", String.valueOf(cursor.getCount()));
-		  fillData();
-	  //}
-
-	  //cursor.close();
+	  } 
 		
   }
-  private void fillData() {
-    getLoaderManager().initLoader(0, null, this);
-    adapter = new CustomCursorAdapter(getApplication(), R.layout.task_row, null, 0);
+  /** Method showing all the todos in a list (clearing the search and the sort result) */
+  private void view_all() {
+ 	restartLoader();	
+  }
+  private void fillData(Cursor cursor) {
+    adapter = new CustomCursorAdapter(getApplication(), R.layout.task_row, cursor, 0);
     setListAdapter(adapter);
   }
 
@@ -246,55 +251,20 @@ public class TasksOverviewActivity extends ListActivity implements
   public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
     adapter.swapCursor(data);
   }
-
   @Override
   public void onLoaderReset(Loader<Cursor> loader) {
     // data is not available anymore, delete reference
     adapter.swapCursor(null);
   }
-  	
+  private void initLoader() {
+	  getLoaderManager().initLoader(0, null, this);
+  }
+  public void restartLoader() {
+		getLoaderManager().restartLoader(0, null, this);
+	}
 
-@Override
-public boolean onQueryTextChange(String arg0) {
-	// Called when the action bar search text has changed.  Update
-    // the search filter, and restart the loader to do a new query
-    // with this filter.
-    String newFilter = !TextUtils.isEmpty("") ? "" : null;
-    // Don't do anything if the filter hasn't actually changed.
-    // Prevents restarting the loader when restoring state.
-    if (mCurFilter == null && newFilter == null) {
-        return true;
-    }
-    if (mCurFilter != null && mCurFilter.equals(newFilter)) {
-        return true;
-    }
-    mCurFilter = newFilter;
-    getLoaderManager().restartLoader(0, null, this);
-    return true;
-}
+  /* Event listeners */
 
-@Override
-public boolean onQueryTextSubmit(String arg0) {
-	// TODO Auto-generated method stub
-	return false;
-}
-
-/* Event listeners */
-
-public void restartLoader() {
-	getLoaderManager().restartLoader(0, null, this);
-}
-
-
-//@Override
-//public void onClose(IOException e) {
-//	if (!TextUtils.isEmpty(mSearchView.getQuery())) {
-//        mSearchView.setQuery(null, true);
-//    }
-//    //return true;
-//	
-//	
-//}
 
 }
 

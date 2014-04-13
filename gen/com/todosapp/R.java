@@ -34,24 +34,32 @@ public final class R {
         public static final int check5=0x7f020000;
         public static final int ic_launcher=0x7f020001;
         public static final int icon_fix=0x7f020002;
+        public static final int small_tiles=0x7f020003;
     }
     public static final class id {
-        public static final int action_settings=0x7f0b000c;
-        public static final int imageView1=0x7f0b0005;
-        public static final int insert=0x7f0b0009;
-        public static final int label=0x7f0b0006;
-        public static final int search=0x7f0b000b;
-        public static final int second_label=0x7f0b0007;
-        public static final int second_label1=0x7f0b0008;
-        public static final int sort=0x7f0b000a;
-        public static final int task_edit_button=0x7f0b0004;
-        public static final int task_edit_description=0x7f0b0000;
-        public static final int task_edit_priority=0x7f0b0002;
-        public static final int task_edit_status=0x7f0b0003;
-        public static final int task_edit_time=0x7f0b0001;
+        public static final int action_settings=0x7f0b0013;
+        public static final int all=0x7f0b0012;
+        public static final int imageView1=0x7f0b000b;
+        public static final int insert=0x7f0b000f;
+        public static final int label=0x7f0b000c;
+        public static final int search=0x7f0b0011;
+        public static final int second_label=0x7f0b000d;
+        public static final int second_label1=0x7f0b000e;
+        public static final int sort=0x7f0b0010;
+        public static final int todo_cancel_button=0x7f0b000a;
+        public static final int todo_edit_button=0x7f0b0009;
+        public static final int todo_edit_description=0x7f0b0005;
+        public static final int todo_edit_priority=0x7f0b0007;
+        public static final int todo_edit_status=0x7f0b0008;
+        public static final int todo_edit_time=0x7f0b0006;
+        public static final int todos_search_button=0x7f0b0003;
+        public static final int todos_search_cancel_button=0x7f0b0004;
+        public static final int todos_search_description=0x7f0b0000;
+        public static final int todos_search_priority=0x7f0b0001;
+        public static final int todos_search_status=0x7f0b0002;
     }
     public static final class layout {
-        public static final int square=0x7f030000;
+        public static final int search_dialog=0x7f030000;
         public static final int task_edit=0x7f030001;
         public static final int task_list=0x7f030002;
         public static final int task_row=0x7f030003;
@@ -62,7 +70,9 @@ public final class R {
     }
     public static final class string {
         public static final int action_settings=0x7f080001;
+        public static final int all=0x7f080011;
         public static final int app_name=0x7f080000;
+        public static final int cancel=0x7f080010;
         public static final int context_menu_cancel=0x7f080007;
         public static final int context_menu_delete=0x7f080005;
         public static final int context_menu_edit=0x7f080006;

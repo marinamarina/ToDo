@@ -1,44 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
     <EditText
-        android:id="@+id/task_edit_description"
+        android:id="@+id/todo_edit_description"
         android:layout_width="match_parent"
         android:layout_height="0dip"
         android:layout_weight="0.2"
         android:gravity="top"
         android:hint="@string/task_edit_hint"
         android:imeOptions="actionNext"
+        android:inputType="text"
+        android:singleLine="true"
         android:textSize="24sp" >
+
     </EditText>
 
     <TextView
-        android:id="@+id/task_edit_time"
+        android:id="@+id/todo_edit_time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/due_date_hint"
         android:textSize="25sp" />
 
     <Spinner
-        android:id="@+id/task_edit_priority"
+        android:id="@+id/todo_edit_priority"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:entries="@array/priorities" />
 
     <Spinner
-        android:id="@+id/task_edit_status"
+        android:id="@+id/todo_edit_status"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:entries="@array/status" />
 
-    <Button
-        android:id="@+id/task_edit_button"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/task_edit_confirm" >
-    </Button>
+        android:gravity="center" >
+
+        <Button
+            android:id="@+id/todo_edit_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="50dp"
+            android:text="@string/task_edit_confirm" />
+
+        <Button
+            android:id="@+id/todo_cancel_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel" />
+
+    </LinearLayout>
 
 </LinearLayout>

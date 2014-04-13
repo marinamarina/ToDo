@@ -30,7 +30,6 @@ public class CustomCursorAdapter extends CursorAdapter {
 	  public View newView(Context context, Cursor cursor, ViewGroup parent) {
 		   final LayoutInflater inflater = LayoutInflater.from(context);
 	        View v = inflater.inflate(layout, parent, false);
-	
 	        return v;
 	   
 	  }

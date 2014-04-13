@@ -85,6 +85,7 @@ public class MyTaskContentProvider extends ContentProvider {
 	    return cursor;
 	  }
 
+
 	  @Override
 	  public String getType(Uri uri) {
 	    return null;

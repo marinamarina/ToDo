@@ -13,11 +13,17 @@
         android:actionProviderClass="android.support.v7.widget.ShareActionProvider"
         android:title="@string/sort">
     </item>
-     <item
+    <item
         android:id="@+id/search"
         android:icon="@android:drawable/ic_search_category_default"
         android:showAsAction="always"
         android:title="@string/search">
         
+    </item>
+    <item
+        android:id="@+id/all"
+        android:icon="@drawable/small_tiles"
+        android:showAsAction="always"
+        android:title="@string/all">
     </item>   
 </menu>

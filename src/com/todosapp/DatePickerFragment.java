@@ -32,6 +32,6 @@ public  class DatePickerFragment extends DialogFragment
 		GregorianCalendar calTime = new GregorianCalendar(year, month, day, 0, 0);
 		Date date = calTime.getTime();
 		String dateAsString = DateFormat.getDateInstance().format(date);
-		((TextView)(getActivity().findViewById(R.id.task_edit_time))).setText(dateAsString);		
+		((TextView)(getActivity().findViewById(R.id.todo_edit_time))).setText(dateAsString);		
 	}
 }

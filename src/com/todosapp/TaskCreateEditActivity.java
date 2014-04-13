@@ -42,11 +42,11 @@ public class TaskCreateEditActivity extends Activity implements OnClickListener,
     super.onCreate(bundle);
     setContentView(R.layout.task_edit);
 
-    descText = (EditText) findViewById(R.id.task_edit_description);
-    dateView = (TextView) findViewById(R.id.task_edit_time);
-    priorityDropdown = (Spinner) findViewById(R.id.task_edit_priority);
-	statusDropdown = (Spinner) findViewById(R.id.task_edit_status);
-    Button confirmButton = (Button) findViewById(R.id.task_edit_button);
+    descText = (EditText) findViewById(R.id.todo_edit_description);
+    dateView = (TextView) findViewById(R.id.todo_edit_time);
+    priorityDropdown = (Spinner) findViewById(R.id.todo_edit_priority);
+	statusDropdown = (Spinner) findViewById(R.id.todo_edit_status);
+    Button confirmButton = (Button) findViewById(R.id.todo_edit_button);
     
     dateView.setOnClickListener(this);
     confirmButton.setOnClickListener(this);
@@ -142,7 +142,7 @@ private void makeToast(String field) {
   public void onClick(View v) {
 	  switch(v.getId()) {
 	  //Adding validation
-	  	case R.id.task_edit_button: 
+	  	case R.id.todo_edit_button: 
 	  		if (TextUtils.isEmpty(descText.getText().toString())) {
 	  			makeToast("description");
 	  		} else if( priorityDropdown.getSelectedItem().equals(getResources().getStringArray(R.array.priorities)[0])) {
@@ -154,14 +154,20 @@ private void makeToast(String field) {
 	  			finish();
 	  		}
 	  		break;
-	  	case R.id.task_edit_time: 
+	  	case R.id.todo_cancel_button:
+	  		this.finishThis();
+	  		break;
+	  	case R.id.todo_edit_time: 
 	  		DialogFragment newFragment = new DatePickerFragment();
         	newFragment.show(getFragmentManager(), "datePicker");
         	break;
 	  }
 	
   }
-
+private boolean finishThis() {
+	this.finish();
+	return true;
+}
 @Override
 public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 	// TODO Auto-generated method stub

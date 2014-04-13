@@ -48,6 +48,6 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="16dp"
     android:layout_weight="0.51"
-    android:background="@layout/square" />
+     />
 
 </LinearLayout>
