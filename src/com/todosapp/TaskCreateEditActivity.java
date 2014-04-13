@@ -1,5 +1,6 @@
 package com.todosapp;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.ContentValues;
@@ -7,8 +8,12 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -24,7 +29,7 @@ import com.todosapp.data.TaskTable;
  * TaskCreateEditActivity allows user to enter a new task item 
  * or to change an existing
  */
-public class TaskCreateEditActivity extends Activity implements OnClickListener {
+public class TaskCreateEditActivity extends Activity implements OnClickListener, OnItemSelectedListener {
   private EditText descText;
   private TextView dateView;
   private Spinner priorityDropdown;
@@ -56,14 +61,37 @@ public class TaskCreateEditActivity extends Activity implements OnClickListener 
 
   }
 
+  @SuppressWarnings("unchecked")
   private void fillData(Uri uri) {
     String[] projection = { TaskTable.COLUMN_DESCRIPTION, TaskTable.COLUMN_PRIORITY, TaskTable.COLUMN_STATUS };
-    Cursor cursor = getContentResolver().query(uri, projection, null, null,
-        null);
+    Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
+    String currentPriority;
+    String currentStatus;
+    ArrayAdapter<String> priorityAdapter;
+    ArrayAdapter<String> statusAdapter;
+    int priorityDropdownPosition;
+    int statusDropdownPosition;
+    
     if (cursor != null) {
       cursor.moveToFirst();
-      descText.setText(cursor.getString(cursor
-          .getColumnIndexOrThrow(TaskTable.COLUMN_DESCRIPTION)));
+      
+      // Fill the form with the current data from the database 
+      //description field
+      descText.setText(cursor.getString(cursor.getColumnIndexOrThrow(TaskTable.COLUMN_DESCRIPTION)));
+     
+      //priority field   
+      currentPriority = cursor.getString(cursor.getColumnIndexOrThrow(TaskTable.COLUMN_PRIORITY));   
+      priorityAdapter = (ArrayAdapter<String>) priorityDropdown.getAdapter(); //cast to an ArrayAdapter
+      priorityDropdownPosition = priorityAdapter.getPosition(currentPriority);
+      priorityDropdown.setSelection(priorityDropdownPosition);
+      
+    //status field
+      currentStatus = cursor.getString(cursor.getColumnIndexOrThrow(TaskTable.COLUMN_STATUS));      
+      statusAdapter = (ArrayAdapter<String>) statusDropdown.getAdapter(); //cast to an ArrayAdapter
+      statusDropdownPosition = statusAdapter.getPosition(currentStatus); //
+      statusDropdown.setSelection(statusDropdownPosition);
+      Log.w("LISI", String.valueOf(statusAdapter.toString() ));
+      
       // Always close the cursor
       cursor.close();
     }
@@ -82,8 +110,8 @@ public class TaskCreateEditActivity extends Activity implements OnClickListener 
     String priority = (String) priorityDropdown.getSelectedItem();
 	String status = (String) statusDropdown.getSelectedItem();
 
-    // Only save if description is available
-    if (description.length() == 0) {
+    // Add simple validation
+    if (description.length() == 0 ) {
       return;
     }
 
@@ -102,8 +130,9 @@ public class TaskCreateEditActivity extends Activity implements OnClickListener 
     }
   }
 
-  private void makeToast() {
-    Toast.makeText(TaskCreateEditActivity.this, "Description can't be empty",
+  @SuppressLint("DefaultLocale")
+private void makeToast(String field) {
+    Toast.makeText(TaskCreateEditActivity.this, "Field " + field + " can't be empty",
         Toast.LENGTH_LONG).show();
   }
   /**
@@ -112,9 +141,14 @@ public class TaskCreateEditActivity extends Activity implements OnClickListener 
   @Override
   public void onClick(View v) {
 	  switch(v.getId()) {
+	  //Adding validation
 	  	case R.id.task_edit_button: 
 	  		if (TextUtils.isEmpty(descText.getText().toString())) {
-	  			makeToast();
+	  			makeToast("description");
+	  		} else if( priorityDropdown.getSelectedItem().equals(getResources().getStringArray(R.array.priorities)[0])) {
+	  			makeToast("priority");
+	  		} else if( statusDropdown.getSelectedItem().equals(getResources().getStringArray(R.array.status)[0])) {
+	  			makeToast("status");
 	  		} else {
 	  			setResult(RESULT_OK);
 	  			finish();
@@ -127,5 +161,17 @@ public class TaskCreateEditActivity extends Activity implements OnClickListener 
 	  }
 	
   }
+
+@Override
+public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+	// TODO Auto-generated method stub
+	
+}
+
+@Override
+public void onNothingSelected(AdapterView<?> arg0) {
+	// TODO Auto-generated method stub
+	
+}
 } 
 

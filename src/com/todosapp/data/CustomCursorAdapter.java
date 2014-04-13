@@ -61,7 +61,7 @@ public class CustomCursorAdapter extends CursorAdapter {
 		   int secondLabelIndex;
 		   
 		   if(sortBy_lc.contains("description")) {
-			   Log.w("LISI", "descr");
+			   secondLabelEl.setText("");
 		   } else if (sortBy_lc.contains("date")) {
 			   secondLabelIndex=cursor.getColumnIndex(TasksOverviewActivity.sortBy);
 			   String status = "Completion date: " + cursor.getString(secondLabelIndex);

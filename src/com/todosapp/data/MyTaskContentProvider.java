@@ -54,7 +54,7 @@ public class MyTaskContentProvider extends ContentProvider {
 	  public Cursor query(Uri uri, String[] projection, String selection,
 	      String[] selectionArgs, String sortOrder) {
 
-	    // Uisng SQLiteQueryBuilder instead of query() method
+	    // Using SQLiteQueryBuilder instead of query() method
 	    SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
 
 	    // Check if the caller has requested a column which does not exist
@@ -175,7 +175,7 @@ public class MyTaskContentProvider extends ContentProvider {
 	    getContext().getContentResolver().notifyChange(uri, null);
 	    return rowsUpdated;
 	  }
-
+	  
 	  private void checkColumns(String[] projection) {
 	    String[] available = { TaskTable.COLUMN_DUEDATE, TaskTable.COLUMN_PRIORITY, TaskTable.COLUMN_STATUS, TaskTable.COLUMN_DESCRIPTION,
 	        TaskTable.COLUMN_ID };

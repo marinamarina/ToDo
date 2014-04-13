@@ -5,6 +5,7 @@ import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.LoaderManager;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
@@ -88,6 +89,10 @@ public class TasksOverviewActivity extends ListActivity implements
 //    //mSearchView.setOnCloseListener( this);
 //    mSearchView.setIconifiedByDefault(true);
 //    item.setActionView(mSearchView);
+    
+    //SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+    //SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+    //searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
     return true;
   }
   @Override
@@ -109,11 +114,14 @@ public class TasksOverviewActivity extends ListActivity implements
    case R.id.sort:
    	sortBy();
    	return true;
-   }
+   case R.id.search:
+	 search();
+	 return true;
+   }   
    return super.onOptionsItemSelected(item);
  }
 
- @Override
+@Override
  public boolean onContextItemSelected(MenuItem item) {
      AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
              .getMenuInfo();
@@ -121,8 +129,9 @@ public class TasksOverviewActivity extends ListActivity implements
      case DELETE_ID:
 		Uri uri = Uri.parse(MyTaskContentProvider.CONTENT_URI + "/"
 		      + info.id);
+		
 		getContentResolver().delete(uri, null, null);
-		fillData();
+		restartLoader();
 		return true;
      case EDIT_ID:
        Intent intent = new Intent(this, TaskCreateEditActivity.class);
@@ -179,15 +188,50 @@ public class TasksOverviewActivity extends ListActivity implements
        levelDialog = builder.create();
        levelDialog.show();
   }
-  
-  private void fillData() {
+  private void search() {
+	  String searchString = "Feed ";
+	  Uri uri = Uri.parse(MyTaskContentProvider.CONTENT_TYPE);
+	  String[] projection = { TaskTable.COLUMN_ID, TaskTable.COLUMN_DESCRIPTION, TaskTable.COLUMN_DUEDATE, TaskTable.COLUMN_PRIORITY, TaskTable.COLUMN_STATUS};
+	  String selection = TaskTable.COLUMN_PRIORITY + " = '"
+		        + ("2") + "'";
+	  String[] selectionArgs = null;
+	  String sortOrder = TaskTable.COLUMN_DESCRIPTION;
+	  
+	  if (TextUtils.isEmpty(searchString)) {
+		    // Setting the selection clause to null will return all words
+		    selection = null;
+		    selectionArgs[0] = "";
 
+		} else {
+		    // Constructs a selection clause that matches the word that the user entered.
+		    selection = TaskTable.COLUMN_PRIORITY + " IN  ( 2, 5 )";
+
+		    // Moves the user's input string to the selection arguments.
+		    //selectionArgs[0] = searchString;
+
+		}
+	  	  
+	  getContentResolver().query(uri, projection, selection, selectionArgs, sortOrder);  
+	  
+	  //if(cursor==null) {
+		  //Log.w("LISI", "null");
+	  //} else if (cursor.getCount() < 1) {
+		//  Log.w("LISI", "unsuccessful");
+	  //} else {
+		 //cursor.moveToFirst();
+		  
+		  //Log.w("LISI", String.valueOf(cursor.getCount()));
+		  fillData();
+	  //}
+
+	  //cursor.close();
+		
+  }
+  private void fillData() {
     getLoaderManager().initLoader(0, null, this);
     adapter = new CustomCursorAdapter(getApplication(), R.layout.task_row, null, 0);
     setListAdapter(adapter);
   }
-
- 
 
   // Creates a new loader after the initLoader () call
   @Override

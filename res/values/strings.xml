@@ -9,9 +9,13 @@
 	<string name="context_menu_delete">Delete Task</string>
 	<string name="context_menu_edit">Edit Task</string>
 	<string name="context_menu_cancel">Cancel</string>
-	<string name="task_edit_hint">Enter task description here...</string>
+	<string name="task_edit_hint">Enter task description here&#8230;</string>
 	<string name="task_edit_confirm">Confirm</string>
 	<string name="due_date_hint">Choose a due date</string>
 	<string name="todo">TODO</string>
-
+    <string name="insert">Insert</string>
+	 <string name="sort">Sort</string>
+	<string name="search">Search</string>
+    <string name="search_hint">Please, search&#8230;</string>
+	
 </resources>
