@@ -34,7 +34,7 @@ public class CustomCursorAdapter extends CursorAdapter {
 	   
 	  }
 	  @SuppressLint("DefaultLocale")
-	@Override
+	  @Override
 	  public void bindView(View view, Context context, Cursor cursor) {
 		  labelEl = (TextView) view.findViewById(R.id.label);
 		  secondLabelEl = (TextView) view.findViewById(R.id.second_label);

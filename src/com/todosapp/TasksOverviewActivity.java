@@ -12,7 +12,6 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -22,6 +21,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Button;
 
@@ -42,11 +42,14 @@ public class TasksOverviewActivity extends ListActivity implements
   private static final int DELETE_ID = Menu.FIRST + 1;
   private static final int EDIT_ID = Menu.FIRST + 2;
   private static final int CANCEL_ID = Menu.FIRST + 3;
+  ListView lv;
 
   private CustomCursorAdapter adapter;
   AlertDialog levelDialog;
   public static String sortBy = "";
+  //the current cursor will be swapped for the search cursor, if user did a search
   public static Cursor searchCursor=null;
+  //search cursor related fields
   String searchByDescription = "";
   String searchByPriority = "";
   String searchByStatus = "";
@@ -55,8 +58,9 @@ public class TasksOverviewActivity extends ListActivity implements
   String  selection = "";
   String selectionArgs[] = new String[1];
   
-  
- /** Called when the activity is first created. */
+ /** 
+  * Called when the activity is first created.
+  */
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -64,9 +68,9 @@ public class TasksOverviewActivity extends ListActivity implements
     this.getListView().setDividerHeight(2);
     initLoader();
     fillData(null);
-    //http://developer.android.com/guide/topics/ui/actionbar.html#Dropdown
    
     registerForContextMenu(getListView());
+    
   }
 
   // Create the menu based on the XML definition
@@ -76,7 +80,9 @@ public class TasksOverviewActivity extends ListActivity implements
     return true;
   }
   
-  /** Select an item from the context menu */
+  /** 
+   * Select an item from the context menu
+   */
   @Override
   public void onCreateContextMenu(ContextMenu menu, View v,
       ContextMenuInfo menuInfo) {
@@ -87,7 +93,9 @@ public class TasksOverviewActivity extends ListActivity implements
 
   }
 
-  /** Action bar related methods */
+  /** 
+   * Action bar related methods 
+   */
   // Insert
   private void createTask() {
     Intent intent = new Intent(this, TaskCreateEditActivity.class);
@@ -128,7 +136,8 @@ public class TasksOverviewActivity extends ListActivity implements
        levelDialog = builder.create();
        levelDialog.show();
   	}
-  	// Search...
+  
+  	// Search
   	private void search() {
 	  //Create a search dialog
 	  final Dialog dialog = new Dialog(this);
@@ -140,23 +149,17 @@ public class TasksOverviewActivity extends ListActivity implements
    			final EditText search_description = (EditText) dialog.findViewById(R.id.todos_search_description);
 			final Spinner priorityDropdown = (Spinner) dialog.findViewById(R.id.todos_search_priority);
 			final Spinner statusDropdown = (Spinner) dialog.findViewById(R.id.todos_search_status);
-			Button db = (Button) dialog.findViewById(R.id.todos_search_button);
-			Button db1 = (Button) dialog.findViewById(R.id.todos_search_cancel_button);
+			Button buttonSearch = (Button) dialog.findViewById(R.id.todos_search_button);
+			Button buttonCancel = (Button) dialog.findViewById(R.id.todos_search_cancel_button);
 			
-				db.setOnClickListener(new OnClickListener() {
+				buttonSearch.setOnClickListener(new OnClickListener() {
    					@Override
    					public void onClick(View v) {
-   						//if (TextUtils.isEmpty(searchString)) {
-   							//Setting the selection clause to null will return all words
-   							//searchString = "";
-   							//} else {
-   							    
    								// Constructs a selection clause that matches the word that the user entered.
    								searchByDescription = search_description.getText().toString();
    								searchByPriority = priorityDropdown.getSelectedItem().toString();
    								searchByStatus = statusDropdown.getSelectedItem().toString();
-   					   			
-   							//}
+
    								boolean priorityFlag = searchByPriority.equals(priorityDropdown.getItemAtPosition(0));
    								boolean statusFlag = searchByStatus.equals(statusDropdown.getItemAtPosition(0));
    								
@@ -179,7 +182,7 @@ public class TasksOverviewActivity extends ListActivity implements
    								dialog.dismiss();
    							}
    						});
-   						db1.setOnClickListener(new OnClickListener() {
+   						buttonCancel.setOnClickListener(new OnClickListener() {
    							@Override
    							public void onClick(View v) {
    								
@@ -187,17 +190,8 @@ public class TasksOverviewActivity extends ListActivity implements
    							}
    						});
    			 
-   						dialog.show();
+   	 dialog.show();
    				 
-	  if(searchCursor==null) {
-		 
-	  } else if (searchCursor.getCount() < 1) {
-		  
-	  } else {
-		 // searchCursor.moveToFirst();
-		  //Log.w("LISI", String.valueOf(searchCursor.getCount()));
-		  
-	  } 
 		
   }
   //View all
@@ -212,7 +206,7 @@ public class TasksOverviewActivity extends ListActivity implements
 	 setListAdapter(adapter);
   }
 
-  /** Loader related methods */
+  /** Cursor loader related methods */
   // Creates a new loader after the initLoader () call
   @Override
   public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -258,7 +252,9 @@ public class TasksOverviewActivity extends ListActivity implements
     }   
     return super.onOptionsItemSelected(item);
   }
-  /** Select an item from the context menu menu */
+  /** 
+   * Select an item from the context menu
+   */
   @Override
   public boolean onContextItemSelected(MenuItem item) {
       AdapterContextMenuInfo info = (AdapterContextMenuInfo) item

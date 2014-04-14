@@ -34,6 +34,7 @@ public class TaskCreateEditActivity extends Activity implements OnClickListener,
   private TextView dateView;
   private Spinner priorityDropdown;
   private Spinner statusDropdown;
+  private Button confirmButton;
 
   private Uri taskUri;
 
@@ -46,7 +47,7 @@ public class TaskCreateEditActivity extends Activity implements OnClickListener,
     dateView = (TextView) findViewById(R.id.todo_edit_time);
     priorityDropdown = (Spinner) findViewById(R.id.todo_edit_priority);
 	statusDropdown = (Spinner) findViewById(R.id.todo_edit_status);
-    Button confirmButton = (Button) findViewById(R.id.todo_edit_button);
+    confirmButton = (Button) findViewById(R.id.todo_edit_button);
     
     dateView.setOnClickListener(this);
     confirmButton.setOnClickListener(this);
