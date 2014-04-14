@@ -75,7 +75,7 @@ public class TaskCreateEditActivity extends Activity implements OnClickListener,
     if (cursor != null) {
       cursor.moveToFirst();
       
-      // Fill the form with the current data from the database 
+      // Fill the form with the current data from the database when user edits a single todo 
       //description field
       descText.setText(cursor.getString(cursor.getColumnIndexOrThrow(TaskTable.COLUMN_DESCRIPTION)));
      
@@ -85,7 +85,7 @@ public class TaskCreateEditActivity extends Activity implements OnClickListener,
       priorityDropdownPosition = priorityAdapter.getPosition(currentPriority);
       priorityDropdown.setSelection(priorityDropdownPosition);
       
-    //status field
+      //status field
       currentStatus = cursor.getString(cursor.getColumnIndexOrThrow(TaskTable.COLUMN_STATUS));      
       statusAdapter = (ArrayAdapter<String>) statusDropdown.getAdapter(); //cast to an ArrayAdapter
       statusDropdownPosition = statusAdapter.getPosition(currentStatus); //

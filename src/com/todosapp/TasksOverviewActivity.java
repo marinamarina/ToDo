@@ -50,23 +50,17 @@ public class TasksOverviewActivity extends ListActivity implements
   AlertDialog levelDialog;
   public static String sortBy = "";
   public static Cursor searchCursor;
-  String searchString = "";
-  String searchString1 = "1";
-  String searchString2 = "In progress";
+  String searchByDescription = "";
+  String searchByPriority = "";
+  String searchByStatus = "";
   Uri uri = MyTaskContentProvider.CONTENT_URI;
   String[] projection = { TaskTable.COLUMN_ID, TaskTable.COLUMN_DESCRIPTION, TaskTable.COLUMN_DUEDATE, TaskTable.COLUMN_PRIORITY, TaskTable.COLUMN_STATUS};
-  String  selection = TaskTable.COLUMN_DESCRIPTION + " LIKE ?" 
-		  			  + " AND " + TaskTable.COLUMN_PRIORITY + "=?"
-		  			  + " AND " + TaskTable.COLUMN_STATUS   + "=?";
-  // Moves the user's input string to the selection arguments.
-  String[] selectionArgs = {"%" + searchString + "%", searchString1, searchString2};
+  String  selection = "";
+  // Moves the user's input string to the selection arguments
+  String selectionArgs[] = new String[2];
   
   
-  
-
-  
-/** Called when the activity is first created. */
-
+ /** Called when the activity is first created. */
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -85,6 +79,8 @@ public class TasksOverviewActivity extends ListActivity implements
     new MenuInflater(this).inflate(R.menu.list_menu, menu);
     return true;
   }
+  
+  /** Select an item from the context menu */
   @Override
   public void onCreateContextMenu(ContextMenu menu, View v,
       ContextMenuInfo menuInfo) {
@@ -94,71 +90,32 @@ public class TasksOverviewActivity extends ListActivity implements
     menu.add(0, CANCEL_ID, 0, R.string.context_menu_cancel);
 
   }
-  /** Select an item from the action bar menu */
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    switch (item.getItemId()) {
-    case R.id.insert:
-      createTask();
-      return true;
-    case R.id.sort:
-    	sortBy();
-    	return true;
-    case R.id.search:
- 	 search();
- 	 return true;
-    case R.id.all:
- 		 view_all();
- 		 return true;
-    }   
-    return super.onOptionsItemSelected(item);
-  }
 
-@Override
- public boolean onContextItemSelected(MenuItem item) {
-     AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
-             .getMenuInfo();
-     switch (item.getItemId()) {
-     case DELETE_ID:
-		Uri uri = Uri.parse(MyTaskContentProvider.CONTENT_URI + "/"
-		      + info.id);
-		
-		getContentResolver().delete(uri, null, null);
-		restartLoader();
-		return true;
-     case EDIT_ID:
-       Intent intent = new Intent(this, TaskCreateEditActivity.class);
-       Uri taskUri = Uri.parse(MyTaskContentProvider.CONTENT_URI + "/" + info.id);
-       intent.putExtra(MyTaskContentProvider.CONTENT_ITEM_TYPE, taskUri);
-       startActivity(intent);
-       return true;
-     case CANCEL_ID:
-   	return true;
-   }
-   return super.onContextItemSelected(item);
- }
-
+  /** Action bar related methods */
+  // Insert
   private void createTask() {
     Intent intent = new Intent(this, TaskCreateEditActivity.class);
     startActivity(intent);
   }
-
+  
+  //Sort
   private void sortBy() {  
 	  AlertDialog.Builder builder = new AlertDialog.Builder(this);
-	      builder.setTitle("Sort tasks by")
-	      		  .setSingleChoiceItems(R.array.sortBySpinnerItems, -1, new DialogInterface.OnClickListener() {
-	      			  public void onClick(DialogInterface dialog, int item) {
-	      				  switch(item) {
-	      				  	case 0:
-	      				  		sortBy= TaskTable.COLUMN_DESCRIPTION;
-                              break;
-	      				  	case 1:
-	      				  		sortBy= TaskTable.COLUMN_DUEDATE;
-                             break;
-	      				  	case 2:
-	      				  	//reverse sort order
-	      				  	sortBy= TaskTable.COLUMN_PRIORITY + " DESC";
-                             break;
+	  builder.setTitle("Sort tasks by")
+	         .setSingleChoiceItems(R.array.sortBySpinnerItems, -1, new DialogInterface.OnClickListener() {
+	      	 
+	          public void onClick(DialogInterface dialog, int item) {
+	      		switch(item) {
+	      			case 0:
+	      				sortBy= TaskTable.COLUMN_DESCRIPTION;
+                     break;
+	      			 case 1:
+	      				sortBy= TaskTable.COLUMN_DUEDATE;
+                     break;
+	      			 case 2:
+	      			//reverse sort order
+	      			 sortBy= TaskTable.COLUMN_PRIORITY + " DESC";
+                     break;
 	      			}
                   levelDialog.dismiss(); 
                   if (searchCursor==null) { 
@@ -166,6 +123,7 @@ public class TasksOverviewActivity extends ListActivity implements
                   } else {
                 	  //recreating the cursor in order to "pick up" the updated sorting order
                 	  searchCursor=getContentResolver().query(uri, projection, selection, selectionArgs, sortBy);
+                	  initLoader();
                 	  fillData(searchCursor);
                 	  
                   }
@@ -173,9 +131,9 @@ public class TasksOverviewActivity extends ListActivity implements
               });
        levelDialog = builder.create();
        levelDialog.show();
-  }
-  private void search() {
-	  
+  	}
+  	// Search...
+  	private void search() {
 	  //Create a search dialog
 	  final Dialog dialog = new Dialog(this);
       dialog.setTitle("Search by the criteria...");
@@ -184,26 +142,42 @@ public class TasksOverviewActivity extends ListActivity implements
    			dialog.setContentView(R.layout.search_dialog);
    			dialog.setTitle("Search...");
    			final EditText search_description = (EditText) dialog.findViewById(R.id.todos_search_description);
-			Spinner priorityDropdown = (Spinner) dialog.findViewById(R.id.todos_search_priority);
+			final Spinner priorityDropdown = (Spinner) dialog.findViewById(R.id.todos_search_priority);
+			final Spinner statusDropdown = (Spinner) dialog.findViewById(R.id.todos_search_status);
 			Button db = (Button) dialog.findViewById(R.id.todos_search_button);
 			Button db1 = (Button) dialog.findViewById(R.id.todos_search_cancel_button);
 			
-			
-   						db.setOnClickListener(new OnClickListener() {
-   							@Override
-   							public void onClick(View v) {
-   								if (TextUtils.isEmpty(searchString)) {
-   							    //Setting the selection clause to null will return all words
-   							   searchString = "";
-
-   							} else {
-   							    // Constructs a selection clause that matches the word that the user entered.
-   								searchString = search_description.getText().toString();
+				db.setOnClickListener(new OnClickListener() {
+   					@Override
+   					public void onClick(View v) {
+   						//if (TextUtils.isEmpty(searchString)) {
+   							//Setting the selection clause to null will return all words
+   							//searchString = "";
+   							//} else {
+   							    
+   								// Constructs a selection clause that matches the word that the user entered.
+   								searchByDescription = search_description.getText().toString();
+   								searchByPriority = priorityDropdown.getSelectedItem().toString();
+   								searchByStatus = statusDropdown.getSelectedItem().toString();
    					   			
-   							}
+   							//}
    								
-   								Log.w("LISI", searchString+" "+selectionArgs[0]);
-   								searchCursor=getContentResolver().query(uri, projection, selection, selectionArgs, sortBy);
+   								Log.w("LISI", searchByDescription + " " + selectionArgs[0]);
+   								selectionArgs[0] = "%" + searchByDescription + "%";
+   								selectionArgs[1] = searchByPriority;
+   								//selectionArgs[2] =  searchByStatus;
+   								
+   								String selectionClause1 = searchByPriority.equals(priorityDropdown.getItemAtPosition(0)) ? TaskTable.COLUMN_PRIORITY : " AND " + TaskTable.COLUMN_PRIORITY + "=?";
+   								//String selectionClause2 = searchByStatus.equals(statusDropdown.getItemAtPosition(0)) ? TaskTable.COLUMN_STATUS : " AND " + TaskTable.COLUMN_STATUS + "=?";
+   								
+   								selection = TaskTable.COLUMN_DESCRIPTION + " LIKE ?" 
+   						  			  
+   										+ selectionClause1;
+   						  			 // + selectionClause2;
+   								searchCursor = getContentResolver().query(uri, projection, selection, selectionArgs, sortBy);
+   								Log.w("LISI", selectionArgs[0] + selectionArgs[1]);
+   								Log.w("LISI", selection);
+   								
    		   						fillData(searchCursor);
    								dialog.dismiss();
    							}
@@ -229,15 +203,18 @@ public class TasksOverviewActivity extends ListActivity implements
 	  } 
 		
   }
-  /** Method showing all the todos in a list (clearing the search and the sort result) */
+  //View all
   private void view_all() {
- 	restartLoader();	
+  	restartLoader();	
   }
+  
+  //Fill data
   private void fillData(Cursor cursor) {
-    adapter = new CustomCursorAdapter(getApplication(), R.layout.task_row, cursor, 0);
-    setListAdapter(adapter);
+	 adapter = new CustomCursorAdapter(getApplication(), R.layout.task_row, cursor, 0);
+	 setListAdapter(adapter);
   }
 
+  /** Loader related methods */
   // Creates a new loader after the initLoader () call
   @Override
   public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -264,7 +241,49 @@ public class TasksOverviewActivity extends ListActivity implements
 	}
 
   /* Event listeners */
-
+  /** Select an item from the action bar menu */
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()) {
+    case R.id.insert:
+      createTask();
+      return true;
+    case R.id.sort:
+    	sortBy();
+    	return true;
+    case R.id.search:
+ 	 search();
+ 	 return true;
+    case R.id.all:
+ 		 view_all();
+ 		 return true;
+    }   
+    return super.onOptionsItemSelected(item);
+  }
+  /** Select an item from the context menu menu */
+  @Override
+  public boolean onContextItemSelected(MenuItem item) {
+      AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
+              .getMenuInfo();
+      switch (item.getItemId()) {
+      case DELETE_ID:
+ 		Uri uri = Uri.parse(MyTaskContentProvider.CONTENT_URI + "/"
+ 		      + info.id);
+ 		
+ 		getContentResolver().delete(uri, null, null);
+ 		restartLoader();
+ 		return true;
+      case EDIT_ID:
+        Intent intent = new Intent(this, TaskCreateEditActivity.class);
+        Uri taskUri = Uri.parse(MyTaskContentProvider.CONTENT_URI + "/" + info.id);
+        intent.putExtra(MyTaskContentProvider.CONTENT_ITEM_TYPE, taskUri);
+        startActivity(intent);
+        return true;
+      case CANCEL_ID:
+    	return true;
+    }
+    return super.onContextItemSelected(item);
+  }
 
 }
 

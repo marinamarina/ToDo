@@ -62,11 +62,11 @@ public class CustomCursorAdapter extends CursorAdapter {
 		   if(sortBy_lc.contains("description")) {
 			   secondLabelEl.setText("");
 		   } else if (sortBy_lc.contains("date")) {
-			   secondLabelIndex=cursor.getColumnIndex(TasksOverviewActivity.sortBy);
+			   secondLabelIndex = cursor.getColumnIndex(TasksOverviewActivity.sortBy);
 			   String status = "Completion date: " + cursor.getString(secondLabelIndex);
 			   secondLabelEl.setText(status);
 		   } else if ((sortBy_lc.contains("priority"))) {
-			   secondLabelIndex=cursor.getColumnIndex(TaskTable.COLUMN_PRIORITY);
+			   secondLabelIndex = cursor.getColumnIndex(TaskTable.COLUMN_PRIORITY);
 			   String status = "Priority: " + cursor.getString(secondLabelIndex);
 			   secondLabelEl.setText(status);
 		   }
