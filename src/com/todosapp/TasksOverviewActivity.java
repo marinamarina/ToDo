@@ -1,12 +1,10 @@
 package com.todosapp;
 
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
 import android.app.LoaderManager;
-import android.content.Context;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,7 +12,6 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -56,8 +53,6 @@ public class TasksOverviewActivity extends ListActivity implements
   Uri uri = MyTaskContentProvider.CONTENT_URI;
   String[] projection = { TaskTable.COLUMN_ID, TaskTable.COLUMN_DESCRIPTION, TaskTable.COLUMN_DUEDATE, TaskTable.COLUMN_PRIORITY, TaskTable.COLUMN_STATUS};
   String  selection = "";
-  
-  // Moves the user's input string to the selection arguments
   String selectionArgs[] = new String[1];
   
   
@@ -163,18 +158,18 @@ public class TasksOverviewActivity extends ListActivity implements
    					   			
    							//}
    								boolean priorityFlag = searchByPriority.equals(priorityDropdown.getItemAtPosition(0));
+   								boolean statusFlag = searchByStatus.equals(statusDropdown.getItemAtPosition(0));
    								
    								selectionArgs[0] = "%" + searchByDescription + "%";
    								
-   								//assuming priority is always equal to 1...
+   								//priority is either equal to the queried one or to the whole set(if not selected)
    								String queriedPriority = (priorityFlag==true) ? "1,2,3,4,5" : searchByPriority;
-   								//selectionArgs[2] =  searchByStatus;
-   								Log.w("LISI", queriedPriority);
+   								String queriedStatus = (statusFlag==true) ? "'Not started', 'In progress', 'Completed'" : "'" + searchByStatus + "'";
+
    								String selectionClause1 = " AND " + TaskTable.COLUMN_PRIORITY + " IN (" + queriedPriority + ")";
-   								//String selectionClause2 = searchByStatus.equals(statusDropdown.getItemAtPosition(0)) ? TaskTable.COLUMN_STATUS : " AND " + TaskTable.COLUMN_STATUS + "=?";
+   								String selectionClause2 = " AND " + TaskTable.COLUMN_STATUS + " IN (" + queriedStatus + ")";
    								
-   								selection = TaskTable.COLUMN_DESCRIPTION + " LIKE? " 
-   										  + selectionClause1;
+   								selection = TaskTable.COLUMN_DESCRIPTION + " LIKE? " + selectionClause1 + selectionClause2;
    								
    						  			 // + selectionClause2;
    								searchCursor = getContentResolver().query(uri, projection, selection, selectionArgs, sortBy);
