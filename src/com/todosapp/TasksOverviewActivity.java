@@ -56,8 +56,9 @@ public class TasksOverviewActivity extends ListActivity implements
   Uri uri = MyTaskContentProvider.CONTENT_URI;
   String[] projection = { TaskTable.COLUMN_ID, TaskTable.COLUMN_DESCRIPTION, TaskTable.COLUMN_DUEDATE, TaskTable.COLUMN_PRIORITY, TaskTable.COLUMN_STATUS};
   String  selection = "";
+  
   // Moves the user's input string to the selection arguments
-  String selectionArgs[] = new String[2];
+  String selectionArgs[] = new String[1];
   
   
  /** Called when the activity is first created. */
@@ -161,22 +162,23 @@ public class TasksOverviewActivity extends ListActivity implements
    								searchByStatus = statusDropdown.getSelectedItem().toString();
    					   			
    							//}
+   								boolean priorityFlag = searchByPriority.equals(priorityDropdown.getItemAtPosition(0));
    								
-   								Log.w("LISI", searchByDescription + " " + selectionArgs[0]);
    								selectionArgs[0] = "%" + searchByDescription + "%";
-   								selectionArgs[1] = searchByPriority;
-   								//selectionArgs[2] =  searchByStatus;
    								
-   								String selectionClause1 = searchByPriority.equals(priorityDropdown.getItemAtPosition(0)) ? TaskTable.COLUMN_PRIORITY : " AND " + TaskTable.COLUMN_PRIORITY + "=?";
+   								//assuming priority is always equal to 1...
+   								String queriedPriority = (priorityFlag==true) ? "1,2,3,4,5" : searchByPriority;
+   								//selectionArgs[2] =  searchByStatus;
+   								Log.w("LISI", queriedPriority);
+   								String selectionClause1 = " AND " + TaskTable.COLUMN_PRIORITY + " IN (" + queriedPriority + ")";
    								//String selectionClause2 = searchByStatus.equals(statusDropdown.getItemAtPosition(0)) ? TaskTable.COLUMN_STATUS : " AND " + TaskTable.COLUMN_STATUS + "=?";
    								
-   								selection = TaskTable.COLUMN_DESCRIPTION + " LIKE ?" 
-   						  			  
-   										+ selectionClause1;
+   								selection = TaskTable.COLUMN_DESCRIPTION + " LIKE? " 
+   										  + selectionClause1;
+   								
    						  			 // + selectionClause2;
    								searchCursor = getContentResolver().query(uri, projection, selection, selectionArgs, sortBy);
-   								Log.w("LISI", selectionArgs[0] + selectionArgs[1]);
-   								Log.w("LISI", selection);
+   								
    								
    		   						fillData(searchCursor);
    								dialog.dismiss();
@@ -193,9 +195,9 @@ public class TasksOverviewActivity extends ListActivity implements
    						dialog.show();
    				 
 	  if(searchCursor==null) {
-		  Log.w("LISI", "null");
+		 
 	  } else if (searchCursor.getCount() < 1) {
-		  Log.w("LISI", "unsuccessful");
+		  
 	  } else {
 		 // searchCursor.moveToFirst();
 		  //Log.w("LISI", String.valueOf(searchCursor.getCount()));
