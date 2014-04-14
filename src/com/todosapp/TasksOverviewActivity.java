@@ -49,7 +49,7 @@ public class TasksOverviewActivity extends ListActivity implements
   private CustomCursorAdapter adapter;
   AlertDialog levelDialog;
   public static String sortBy = "";
-  public static Cursor searchCursor;
+  public static Cursor searchCursor=null;
   String searchByDescription = "";
   String searchByPriority = "";
   String searchByStatus = "";
@@ -207,7 +207,8 @@ public class TasksOverviewActivity extends ListActivity implements
   }
   //View all
   private void view_all() {
-  	restartLoader();	
+  	restartLoader();
+  	searchCursor=null;
   }
   
   //Fill data
