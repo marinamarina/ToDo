@@ -91,7 +91,6 @@ public class TaskCreateEditActivity extends Activity implements OnClickListener,
       statusAdapter = (ArrayAdapter<String>) statusDropdown.getAdapter(); //cast to an ArrayAdapter
       statusDropdownPosition = statusAdapter.getPosition(currentStatus); //
       statusDropdown.setSelection(statusDropdownPosition);
-      Log.w("LISI", String.valueOf(statusAdapter.toString() ));
       
       // Always close the cursor
       cursor.close();
@@ -142,13 +141,22 @@ private void makeToast(String field) {
   @Override
   public void onClick(View v) {
 	  switch(v.getId()) {
+	  
 	  //Adding validation
-	  	case R.id.todo_edit_button: 
+	  //All fields are required
+	  	case R.id.todo_edit_button:
+	  		
+	  		//description
 	  		if (TextUtils.isEmpty(descText.getText().toString())) {
 	  			makeToast("description");
+	  		} else if( TextUtils.isEmpty(dateView.getText()) ) {
+	  			//date
+	  			makeToast("date");
 	  		} else if( priorityDropdown.getSelectedItem().equals(getResources().getStringArray(R.array.priorities)[0])) {
+	  			//priority
 	  			makeToast("priority");
 	  		} else if( statusDropdown.getSelectedItem().equals(getResources().getStringArray(R.array.status)[0])) {
+	  			//status
 	  			makeToast("status");
 	  		} else {
 	  			setResult(RESULT_OK);
@@ -160,7 +168,9 @@ private void makeToast(String field) {
 	  		break;
 	  	case R.id.todo_edit_time: 
 	  		DialogFragment newFragment = new DatePickerFragment();
+	  		//DatePicker dp = newFragment.getDatePicker(); 
         	newFragment.show(getFragmentManager(), "datePicker");
+        	
         	break;
 	  }
 	
