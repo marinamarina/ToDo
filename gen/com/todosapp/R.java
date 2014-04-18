@@ -39,7 +39,7 @@ public final class R {
     public static final class id {
         public static final int action_settings=0x7f0b0013;
         public static final int all=0x7f0b0012;
-        public static final int imageView1=0x7f0b000b;
+        public static final int checkboxView=0x7f0b000b;
         public static final int insert=0x7f0b000f;
         public static final int label=0x7f0b000c;
         public static final int search=0x7f0b0011;
@@ -60,9 +60,9 @@ public final class R {
     }
     public static final class layout {
         public static final int search_dialog=0x7f030000;
-        public static final int task_edit=0x7f030001;
-        public static final int task_list=0x7f030002;
-        public static final int task_row=0x7f030003;
+        public static final int todo_edit=0x7f030001;
+        public static final int todo_row=0x7f030002;
+        public static final int todos_list=0x7f030003;
     }
     public static final class menu {
         public static final int list_menu=0x7f0a0000;
