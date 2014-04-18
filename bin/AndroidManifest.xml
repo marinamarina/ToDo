@@ -25,7 +25,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.todosapp.TaskCreateEditActivity">
+            android:name="com.todosapp.TodoCreateEditActivity">
         </activity>
   		<provider
 		    android:authorities="com.todosapp.contentprovider"

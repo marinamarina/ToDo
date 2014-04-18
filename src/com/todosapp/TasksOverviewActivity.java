@@ -98,7 +98,7 @@ public class TasksOverviewActivity extends ListActivity implements
    */
   // Insert
   private void createTask() {
-    Intent intent = new Intent(this, TaskCreateEditActivity.class);
+    Intent intent = new Intent(this, TodoCreateEditActivity.class);
     startActivity(intent);
   }
   
@@ -268,7 +268,7 @@ public class TasksOverviewActivity extends ListActivity implements
  		restartLoader();
  		return true;
       case EDIT_ID:
-        Intent intent = new Intent(this, TaskCreateEditActivity.class);
+        Intent intent = new Intent(this, TodoCreateEditActivity.class);
         Uri taskUri = Uri.parse(MyTaskContentProvider.CONTENT_URI + "/" + info.id);
         intent.putExtra(MyTaskContentProvider.CONTENT_ITEM_TYPE, taskUri);
         startActivity(intent);

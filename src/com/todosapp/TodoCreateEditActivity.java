@@ -29,7 +29,7 @@ import com.todosapp.data.TaskTable;
  * TaskCreateEditActivity allows user to enter a new task item 
  * or to change an existing
  */
-public class TaskCreateEditActivity extends Activity implements OnClickListener, OnItemSelectedListener {
+public class TodoCreateEditActivity extends Activity implements OnClickListener, OnItemSelectedListener {
   private EditText descText;
   private TextView dateView;
   private Spinner priorityDropdown;
@@ -132,7 +132,7 @@ public class TaskCreateEditActivity extends Activity implements OnClickListener,
 
   @SuppressLint("DefaultLocale")
 private void makeToast(String field) {
-    Toast.makeText(TaskCreateEditActivity.this, "Field " + field + " can't be empty",
+    Toast.makeText(TodoCreateEditActivity.this, "Field " + field + " can't be empty",
         Toast.LENGTH_LONG).show();
   }
   /**
