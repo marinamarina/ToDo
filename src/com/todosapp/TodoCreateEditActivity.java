@@ -22,8 +22,8 @@ import android.widget.Toast;
 import com.todosapp.DatePickerFragment;
 
 import com.todosapp.R;
-import com.todosapp.data.MyTaskContentProvider;
-import com.todosapp.data.TaskTable;
+import com.todosapp.data.TodoContentProvider;
+import com.todosapp.data.TodosTable;
 
 /*
  * TaskCreateEditActivity allows user to enter a new task item 
@@ -56,7 +56,7 @@ public class TodoCreateEditActivity extends Activity implements OnClickListener,
     // check for extra data passed from the other activity
     if (extras != null) {
       taskUri = extras
-          .getParcelable(MyTaskContentProvider.CONTENT_ITEM_TYPE);
+          .getParcelable(TodoContentProvider.CONTENT_ITEM_TYPE);
       fillData(taskUri);
     }
 
@@ -64,7 +64,7 @@ public class TodoCreateEditActivity extends Activity implements OnClickListener,
 
   @SuppressWarnings("unchecked")
   private void fillData(Uri uri) {
-    String[] projection = { TaskTable.COLUMN_DESCRIPTION, TaskTable.COLUMN_PRIORITY, TaskTable.COLUMN_STATUS };
+    String[] projection = { TodosTable.COLUMN_DESCRIPTION, TodosTable.COLUMN_PRIORITY, TodosTable.COLUMN_STATUS };
     Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
     String currentPriority;
     String currentStatus;
@@ -78,16 +78,16 @@ public class TodoCreateEditActivity extends Activity implements OnClickListener,
       
       // Fill the form with the current data from the database when user edits a single todo 
       //description field
-      descText.setText(cursor.getString(cursor.getColumnIndexOrThrow(TaskTable.COLUMN_DESCRIPTION)));
+      descText.setText(cursor.getString(cursor.getColumnIndexOrThrow(TodosTable.COLUMN_DESCRIPTION)));
      
       //priority field   
-      currentPriority = cursor.getString(cursor.getColumnIndexOrThrow(TaskTable.COLUMN_PRIORITY));   
+      currentPriority = cursor.getString(cursor.getColumnIndexOrThrow(TodosTable.COLUMN_PRIORITY));   
       priorityAdapter = (ArrayAdapter<String>) priorityDropdown.getAdapter(); //cast to an ArrayAdapter
       priorityDropdownPosition = priorityAdapter.getPosition(currentPriority);
       priorityDropdown.setSelection(priorityDropdownPosition);
       
       //status field
-      currentStatus = cursor.getString(cursor.getColumnIndexOrThrow(TaskTable.COLUMN_STATUS));      
+      currentStatus = cursor.getString(cursor.getColumnIndexOrThrow(TodosTable.COLUMN_STATUS));      
       statusAdapter = (ArrayAdapter<String>) statusDropdown.getAdapter(); //cast to an ArrayAdapter
       statusDropdownPosition = statusAdapter.getPosition(currentStatus); //
       statusDropdown.setSelection(statusDropdownPosition);
@@ -116,14 +116,14 @@ public class TodoCreateEditActivity extends Activity implements OnClickListener,
     }
 
     ContentValues values = new ContentValues();
-    values.put(TaskTable.COLUMN_DESCRIPTION, description);
-    values.put(TaskTable.COLUMN_DUEDATE, date);
-    values.put(TaskTable.COLUMN_PRIORITY, priority);
-	values.put(TaskTable.COLUMN_STATUS, status);
+    values.put(TodosTable.COLUMN_DESCRIPTION, description);
+    values.put(TodosTable.COLUMN_DUEDATE, date);
+    values.put(TodosTable.COLUMN_PRIORITY, priority);
+	values.put(TodosTable.COLUMN_STATUS, status);
 
     if (taskUri == null) {
       // New task
-      taskUri = getContentResolver().insert(MyTaskContentProvider.CONTENT_URI, values);
+      taskUri = getContentResolver().insert(TodoContentProvider.CONTENT_URI, values);
     } else {
       // Update task
       getContentResolver().update(taskUri, values, null, null);

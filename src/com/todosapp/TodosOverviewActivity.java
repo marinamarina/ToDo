@@ -25,9 +25,9 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Button;
 
-import com.todosapp.data.CustomCursorAdapter;
-import com.todosapp.data.MyTaskContentProvider;
-import com.todosapp.data.TaskTable;
+import com.todosapp.data.TodoCursorAdapter;
+import com.todosapp.data.TodoContentProvider;
+import com.todosapp.data.TodosTable;
 
 /*
  * TasksOverviewActivity displays the existing task items in a list
@@ -37,14 +37,14 @@ import com.todosapp.data.TaskTable;
  */
 
 @TargetApi(19)
-public class TasksOverviewActivity extends ListActivity implements
+public class TodosOverviewActivity extends ListActivity implements
     LoaderManager.LoaderCallbacks<Cursor> {
   private static final int DELETE_ID = Menu.FIRST + 1;
   private static final int EDIT_ID = Menu.FIRST + 2;
   private static final int CANCEL_ID = Menu.FIRST + 3;
   ListView lv;
 
-  private CustomCursorAdapter adapter;
+  private TodoCursorAdapter adapter;
   AlertDialog levelDialog;
   public static String sortBy = "";
   //the current cursor will be swapped for the search cursor, if user did a search
@@ -53,8 +53,8 @@ public class TasksOverviewActivity extends ListActivity implements
   String searchByDescription = "";
   String searchByPriority = "";
   String searchByStatus = "";
-  Uri uri = MyTaskContentProvider.CONTENT_URI;
-  String[] projection = { TaskTable.COLUMN_ID, TaskTable.COLUMN_DESCRIPTION, TaskTable.COLUMN_DUEDATE, TaskTable.COLUMN_PRIORITY, TaskTable.COLUMN_STATUS};
+  Uri uri = TodoContentProvider.CONTENT_URI;
+  String[] projection = { TodosTable.COLUMN_ID, TodosTable.COLUMN_DESCRIPTION, TodosTable.COLUMN_DUEDATE, TodosTable.COLUMN_PRIORITY, TodosTable.COLUMN_STATUS};
   String  selection = "";
   String selectionArgs[] = new String[1];
   
@@ -111,14 +111,14 @@ public class TasksOverviewActivity extends ListActivity implements
 	          public void onClick(DialogInterface dialog, int item) {
 	      		switch(item) {
 	      			case 0:
-	      				sortBy= TaskTable.COLUMN_DESCRIPTION;
+	      				sortBy= TodosTable.COLUMN_DESCRIPTION;
                      break;
 	      			 case 1:
-	      				sortBy= TaskTable.COLUMN_DUEDATE;
+	      				sortBy= TodosTable.COLUMN_DUEDATE;
                      break;
 	      			 case 2:
 	      			//reverse sort order
-	      			 sortBy= TaskTable.COLUMN_PRIORITY + " DESC";
+	      			 sortBy= TodosTable.COLUMN_PRIORITY + " DESC";
                      break;
 	      			}
                   levelDialog.dismiss(); 
@@ -169,10 +169,10 @@ public class TasksOverviewActivity extends ListActivity implements
    								String queriedPriority = (priorityFlag==true) ? "1,2,3,4,5" : searchByPriority;
    								String queriedStatus = (statusFlag==true) ? "'Not started', 'In progress', 'Completed'" : "'" + searchByStatus + "'";
 
-   								String selectionClause1 = " AND " + TaskTable.COLUMN_PRIORITY + " IN (" + queriedPriority + ")";
-   								String selectionClause2 = " AND " + TaskTable.COLUMN_STATUS + " IN (" + queriedStatus + ")";
+   								String selectionClause1 = " AND " + TodosTable.COLUMN_PRIORITY + " IN (" + queriedPriority + ")";
+   								String selectionClause2 = " AND " + TodosTable.COLUMN_STATUS + " IN (" + queriedStatus + ")";
    								
-   								selection = TaskTable.COLUMN_DESCRIPTION + " LIKE? " + selectionClause1 + selectionClause2;
+   								selection = TodosTable.COLUMN_DESCRIPTION + " LIKE? " + selectionClause1 + selectionClause2;
    								
    						  			 // + selectionClause2;
    								searchCursor = getContentResolver().query(uri, projection, selection, selectionArgs, sortBy);
@@ -202,7 +202,7 @@ public class TasksOverviewActivity extends ListActivity implements
   
   //Fill data
   private void fillData(Cursor cursor) {
-	 adapter = new CustomCursorAdapter(getApplication(), R.layout.task_row, cursor, 0);
+	 adapter = new TodoCursorAdapter(getApplication(), R.layout.task_row, cursor, 0);
 	 setListAdapter(adapter);
   }
 
@@ -210,9 +210,9 @@ public class TasksOverviewActivity extends ListActivity implements
   // Creates a new loader after the initLoader () call
   @Override
   public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-    String[] projection = { TaskTable.COLUMN_ID, TaskTable.COLUMN_DESCRIPTION, TaskTable.COLUMN_DUEDATE, TaskTable.COLUMN_PRIORITY, TaskTable.COLUMN_STATUS};
+    String[] projection = { TodosTable.COLUMN_ID, TodosTable.COLUMN_DESCRIPTION, TodosTable.COLUMN_DUEDATE, TodosTable.COLUMN_PRIORITY, TodosTable.COLUMN_STATUS};
     CursorLoader cursorLoader = new CursorLoader(this,
-        MyTaskContentProvider.CONTENT_URI, projection, null, null, sortBy);
+        TodoContentProvider.CONTENT_URI, projection, null, null, sortBy);
     return cursorLoader;
   }
 
@@ -261,7 +261,7 @@ public class TasksOverviewActivity extends ListActivity implements
               .getMenuInfo();
       switch (item.getItemId()) {
       case DELETE_ID:
- 		Uri uri = Uri.parse(MyTaskContentProvider.CONTENT_URI + "/"
+ 		Uri uri = Uri.parse(TodoContentProvider.CONTENT_URI + "/"
  		      + info.id);
  		
  		getContentResolver().delete(uri, null, null);
@@ -269,8 +269,8 @@ public class TasksOverviewActivity extends ListActivity implements
  		return true;
       case EDIT_ID:
         Intent intent = new Intent(this, TodoCreateEditActivity.class);
-        Uri taskUri = Uri.parse(MyTaskContentProvider.CONTENT_URI + "/" + info.id);
-        intent.putExtra(MyTaskContentProvider.CONTENT_ITEM_TYPE, taskUri);
+        Uri taskUri = Uri.parse(TodoContentProvider.CONTENT_URI + "/" + info.id);
+        intent.putExtra(TodoContentProvider.CONTENT_ITEM_TYPE, taskUri);
         startActivity(intent);
         return true;
       case CANCEL_ID:

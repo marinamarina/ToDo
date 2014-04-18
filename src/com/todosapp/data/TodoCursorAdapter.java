@@ -13,15 +13,15 @@ import android.widget.TextView;
 import com.todosapp.R;
 import com.todosapp.R.color;
 import com.todosapp.R.id;
-import com.todosapp.TasksOverviewActivity;
+import com.todosapp.TodosOverviewActivity;
 
-public class CustomCursorAdapter extends CursorAdapter {
+public class TodoCursorAdapter extends CursorAdapter {
 	  
 	  private int layout;
 	  private TextView labelEl;
 	  private TextView secondLabelEl;
 	  
-	  public CustomCursorAdapter (Context context, int layout, Cursor c, int flags) {
+	  public TodoCursorAdapter (Context context, int layout, Cursor c, int flags) {
 	        super(context, c, flags);
 	        this.layout = layout;
 
@@ -47,7 +47,7 @@ public class CustomCursorAdapter extends CursorAdapter {
 	   }
 	     
 	   
-	   String todoDescription = cursor.getString(cursor.getColumnIndex(TaskTable.COLUMN_DESCRIPTION));
+	   String todoDescription = cursor.getString(cursor.getColumnIndex(TodosTable.COLUMN_DESCRIPTION));
 	   
 	   //Feeding the first text field with the todo description
 	   if (todoDescription != null) {
@@ -55,18 +55,18 @@ public class CustomCursorAdapter extends CursorAdapter {
 	    }
 	   //Feeding the second text field with the data 
 	   //depending on a sort order
-	   if(TasksOverviewActivity.sortBy!="") {
-		   String sortBy_lc=TasksOverviewActivity.sortBy.toLowerCase();
+	   if(TodosOverviewActivity.sortBy!="") {
+		   String sortBy_lc=TodosOverviewActivity.sortBy.toLowerCase();
 		   int secondLabelIndex;
 		   
 		   if(sortBy_lc.contains("description")) {
 			   secondLabelEl.setText("");
 		   } else if (sortBy_lc.contains("date")) {
-			   secondLabelIndex = cursor.getColumnIndex(TasksOverviewActivity.sortBy);
+			   secondLabelIndex = cursor.getColumnIndex(TodosOverviewActivity.sortBy);
 			   String status = "Completion date: " + cursor.getString(secondLabelIndex);
 			   secondLabelEl.setText(status);
 		   } else if ((sortBy_lc.contains("priority"))) {
-			   secondLabelIndex = cursor.getColumnIndex(TaskTable.COLUMN_PRIORITY);
+			   secondLabelIndex = cursor.getColumnIndex(TodosTable.COLUMN_PRIORITY);
 			   String status = "Priority: " + cursor.getString(secondLabelIndex);
 			   secondLabelEl.setText(status);
 		   }

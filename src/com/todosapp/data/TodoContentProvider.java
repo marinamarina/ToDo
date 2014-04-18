@@ -15,7 +15,7 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
 
-public class MyTaskContentProvider extends ContentProvider {
+public class TodoContentProvider extends ContentProvider {
 
 	  // database
 	  private TaskDatabaseHelper database;
@@ -61,7 +61,7 @@ public class MyTaskContentProvider extends ContentProvider {
 	    checkColumns(projection);
 
 	    // Set the table
-	    queryBuilder.setTables(TaskTable.TABLE_TASK);
+	    queryBuilder.setTables(TodosTable.TABLE_TASK);
 
 	    int uriType = sURIMatcher.match(uri);
 	    switch (uriType) {
@@ -69,7 +69,7 @@ public class MyTaskContentProvider extends ContentProvider {
 	      break;
 	    case TASK_ID:
 	      // Adding the ID to the original query
-	      queryBuilder.appendWhere(TaskTable.COLUMN_ID + "="
+	      queryBuilder.appendWhere(TodosTable.COLUMN_ID + "="
 	          + uri.getLastPathSegment());
 	      break;
 	    default:
@@ -98,7 +98,7 @@ public class MyTaskContentProvider extends ContentProvider {
 	    long id = 0;
 	    switch (uriType) {
 	    case TASKS:
-	      id = sqlDB.insert(TaskTable.TABLE_TASK, null, values);
+	      id = sqlDB.insert(TodosTable.TABLE_TASK, null, values);
 	      break;
 	    default:
 	      throw new IllegalArgumentException("Unknown URI: " + uri);
@@ -117,18 +117,18 @@ public class MyTaskContentProvider extends ContentProvider {
 	    int rowsDeleted = 0;
 	    switch (uriType) {
 	    case TASKS:
-	      rowsDeleted = sqlDB.delete(TaskTable.TABLE_TASK, selection,
+	      rowsDeleted = sqlDB.delete(TodosTable.TABLE_TASK, selection,
 	          selectionArgs);
 	      break;
 	    case TASK_ID:
 	      String id = uri.getLastPathSegment();
 	      if (TextUtils.isEmpty(selection)) {
-	        rowsDeleted = sqlDB.delete(TaskTable.TABLE_TASK,
-	            TaskTable.COLUMN_ID + "=" + id, 
+	        rowsDeleted = sqlDB.delete(TodosTable.TABLE_TASK,
+	            TodosTable.COLUMN_ID + "=" + id, 
 	            null);
 	      } else {
-	        rowsDeleted = sqlDB.delete(TaskTable.TABLE_TASK,
-	            TaskTable.COLUMN_ID + "=" + id 
+	        rowsDeleted = sqlDB.delete(TodosTable.TABLE_TASK,
+	            TodosTable.COLUMN_ID + "=" + id 
 	            + " and " + selection,
 	            selectionArgs);
 	      }
@@ -149,7 +149,7 @@ public class MyTaskContentProvider extends ContentProvider {
 	    int rowsUpdated = 0;
 	    switch (uriType) {
 	    case TASKS:
-	      rowsUpdated = sqlDB.update(TaskTable.TABLE_TASK, 
+	      rowsUpdated = sqlDB.update(TodosTable.TABLE_TASK, 
 	          values, 
 	          selection,
 	          selectionArgs);
@@ -157,14 +157,14 @@ public class MyTaskContentProvider extends ContentProvider {
 	    case TASK_ID:
 	      String id = uri.getLastPathSegment();
 	      if (TextUtils.isEmpty(selection)) {
-	        rowsUpdated = sqlDB.update(TaskTable.TABLE_TASK, 
+	        rowsUpdated = sqlDB.update(TodosTable.TABLE_TASK, 
 	            values,
-	            TaskTable.COLUMN_ID + "=" + id, 
+	            TodosTable.COLUMN_ID + "=" + id, 
 	            null);
 	      } else {
-	        rowsUpdated = sqlDB.update(TaskTable.TABLE_TASK, 
+	        rowsUpdated = sqlDB.update(TodosTable.TABLE_TASK, 
 	            values,
-	            TaskTable.COLUMN_ID + "=" + id 
+	            TodosTable.COLUMN_ID + "=" + id 
 	            + " and " 
 	            + selection,
 	            selectionArgs);
@@ -178,8 +178,8 @@ public class MyTaskContentProvider extends ContentProvider {
 	  }
 	  
 	  private void checkColumns(String[] projection) {
-	    String[] available = { TaskTable.COLUMN_DUEDATE, TaskTable.COLUMN_PRIORITY, TaskTable.COLUMN_STATUS, TaskTable.COLUMN_DESCRIPTION,
-	        TaskTable.COLUMN_ID };
+	    String[] available = { TodosTable.COLUMN_DUEDATE, TodosTable.COLUMN_PRIORITY, TodosTable.COLUMN_STATUS, TodosTable.COLUMN_DESCRIPTION,
+	        TodosTable.COLUMN_ID };
 	    if (projection != null) {
 	      HashSet<String> requestedColumns = new HashSet<String>(Arrays.asList(projection));
 	      HashSet<String> availableColumns = new HashSet<String>(Arrays.asList(available));
