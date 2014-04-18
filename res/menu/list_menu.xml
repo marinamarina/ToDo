@@ -22,7 +22,7 @@
     </item>
     <item
         android:id="@+id/all"
-        android:icon="@drawable/small_tiles"
+        android:icon="@drawable/refresh"
         android:showAsAction="always"
         android:title="@string/all">
     </item>   

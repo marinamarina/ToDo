@@ -10,20 +10,21 @@
         android:id="@+id/checkboxView"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:contentDescription="TODO"
+        android:contentDescription="@string/todo"
         android:src="@drawable/checkmark" />
 
   <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/todo"
-        android:orientation="vertical" >
+      android:layout_width="182dp"
+      android:layout_height="wrap_content"
+      android:contentDescription="@string/todo"
+      android:orientation="vertical" >
 
         <TextView
             android:id="@+id/label"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="9dp"
             android:lines="1"
             android:textColor="@color/text"
             android:textColorHint="@color/text"
@@ -43,12 +44,18 @@
      
     </LinearLayout>
 
-<TextView
-    android:id="@+id/second_label1"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="16dp"
-    android:layout_weight="0.51"
-     />
+  <TextView
+      android:id="@+id/date"
+      android:layout_width="0dip"
+      android:layout_height="wrap_content"
+      android:layout_gravity="right"
+      android:layout_marginLeft="0dp"
+      android:layout_marginTop="14dp"
+      android:layout_weight="0.1"
+      android:background="@drawable/date"
+      android:gravity="center"
+      android:textColor="@color/text"
+      android:textSize="17sp"
+      android:typeface="normal" />
 
 </LinearLayout>

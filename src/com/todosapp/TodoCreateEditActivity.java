@@ -10,8 +10,6 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,7 +24,7 @@ import com.todosapp.data.TodosTable;
  * TaskCreateEditActivity allows user to enter a new task item 
  * or to change an existing
  */
-public class TodoCreateEditActivity extends Activity implements OnClickListener, OnItemSelectedListener {
+public class TodoCreateEditActivity extends Activity implements OnClickListener {
 	private EditText descText;
 	private TextView dateView;
 	private Spinner priorityDropdown;
@@ -46,6 +44,7 @@ public class TodoCreateEditActivity extends Activity implements OnClickListener,
 		statusDropdown = (Spinner) findViewById(R.id.todo_edit_status);
 		confirmButton = (Button) findViewById(R.id.todo_edit_button);
 
+		//bind on click listener
 		dateView.setOnClickListener(this);
 		confirmButton.setOnClickListener(this);
 
@@ -56,12 +55,11 @@ public class TodoCreateEditActivity extends Activity implements OnClickListener,
 					.getParcelable(TodoContentProvider.CONTENT_ITEM_TYPE);
 			fillData(taskUri);
 		}
-
 	}
 
 	@SuppressWarnings("unchecked")
 	private void fillData(Uri uri) {
-		String[] projection = { TodosTable.COLUMN_DESCRIPTION, TodosTable.COLUMN_PRIORITY, TodosTable.COLUMN_STATUS };
+		String[] projection = { TodosTable.COLUMN_DESCRIPTION, TodosTable.COLUMN_DUEDATE, TodosTable.COLUMN_PRIORITY, TodosTable.COLUMN_STATUS };
 		Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
 		String currentPriority;
 		String currentStatus;
@@ -74,16 +72,19 @@ public class TodoCreateEditActivity extends Activity implements OnClickListener,
 			cursor.moveToFirst();
 
 			// Fill the form with the current data from the database when user edits a single todo 
-			//description field
+			//description view
 			descText.setText(cursor.getString(cursor.getColumnIndexOrThrow(TodosTable.COLUMN_DESCRIPTION)));
+			
+			//date view
+			dateView.setText(cursor.getString(cursor.getColumnIndexOrThrow(TodosTable.COLUMN_DUEDATE)));
 
-			//priority field   
+			//priority view   
 			currentPriority = cursor.getString(cursor.getColumnIndexOrThrow(TodosTable.COLUMN_PRIORITY));   
 			priorityAdapter = (ArrayAdapter<String>) priorityDropdown.getAdapter(); //cast to an ArrayAdapter
 			priorityDropdownPosition = priorityAdapter.getPosition(currentPriority);
 			priorityDropdown.setSelection(priorityDropdownPosition);
 
-			//status field
+			//status view
 			currentStatus = cursor.getString(cursor.getColumnIndexOrThrow(TodosTable.COLUMN_STATUS));      
 			statusAdapter = (ArrayAdapter<String>) statusDropdown.getAdapter(); //cast to an ArrayAdapter
 			statusDropdownPosition = statusAdapter.getPosition(currentStatus); //
@@ -172,20 +173,10 @@ public class TodoCreateEditActivity extends Activity implements OnClickListener,
 		}
 
 	}
+	
 	private boolean finishThis() {
 		this.finish();
 		return true;
-	}
-	@Override
-	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onNothingSelected(AdapterView<?> arg0) {
-		// TODO Auto-generated method stub
-
 	}
 } 
 

@@ -31,20 +31,22 @@ public final class R {
         public static final int activity_vertical_margin=0x7f050001;
     }
     public static final class drawable {
-        public static final int check5=0x7f020000;
-        public static final int ic_launcher=0x7f020001;
-        public static final int icon_fix=0x7f020002;
-        public static final int small_tiles=0x7f020003;
+        public static final int checkmark=0x7f020000;
+        public static final int checkmark_green=0x7f020001;
+        public static final int date=0x7f020002;
+        public static final int ic_launcher=0x7f020003;
+        public static final int icon_fix=0x7f020004;
+        public static final int refresh=0x7f020005;
+        public static final int small_tiles=0x7f020006;
     }
     public static final class id {
-        public static final int action_settings=0x7f0b0013;
         public static final int all=0x7f0b0012;
         public static final int checkboxView=0x7f0b000b;
+        public static final int date=0x7f0b000e;
         public static final int insert=0x7f0b000f;
         public static final int label=0x7f0b000c;
         public static final int search=0x7f0b0011;
         public static final int second_label=0x7f0b000d;
-        public static final int second_label1=0x7f0b000e;
         public static final int sort=0x7f0b0010;
         public static final int todo_cancel_button=0x7f0b000a;
         public static final int todo_edit_button=0x7f0b0009;
@@ -66,7 +68,6 @@ public final class R {
     }
     public static final class menu {
         public static final int list_menu=0x7f0a0000;
-        public static final int main=0x7f0a0001;
     }
     public static final class string {
         public static final int action_settings=0x7f080001;

@@ -23,7 +23,7 @@ implements DatePickerDialog.OnDateSetListener {
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
-		// Use the current date as the default date in the picker
+		// Use the current date as the default date in the picker (depends on the date set in the Android emulator)
 		c = Calendar.getInstance();
 		year = c.get(Calendar.YEAR);
 		month = c.get(Calendar.MONTH);
@@ -37,8 +37,8 @@ implements DatePickerDialog.OnDateSetListener {
 
 		GregorianCalendar calTime = new GregorianCalendar(year, month, day, 0, 0);
 		Date date = calTime.getTime();
+		//set the minimum date
 		view.getCalendarView().setMinDate(c.getTimeInMillis() - 1000);
-
 		String dateAsString = DateFormat.getDateInstance().format(date);
 		((TextView)(getActivity().findViewById(R.id.todo_edit_time))).setText(dateAsString);		
 	}
