@@ -71,6 +71,8 @@ public class TodoCursorAdapter extends CursorAdapter {
 			labelView.setText(todoDescription); 
 			if (todoCompleted) {
 				labelView.setPaintFlags(labelView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+			} else {
+				labelView.setPaintFlags( labelView.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
 			}
 		}
 		

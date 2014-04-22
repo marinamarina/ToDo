@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -44,7 +45,7 @@ public class TodoCreateEditActivity extends Activity implements OnClickListener 
 		statusDropdown = (Spinner) findViewById(R.id.todo_edit_status);
 		confirmButton = (Button) findViewById(R.id.todo_edit_button);
 
-		//bind on click listener
+		//bind on click listeners
 		dateView.setOnClickListener(this);
 		confirmButton.setOnClickListener(this);
 
@@ -56,7 +57,9 @@ public class TodoCreateEditActivity extends Activity implements OnClickListener 
 			fillData(taskUri);
 		}
 	}
-
+	/** 
+	 * Filling the data for a single todo from database
+	 */
 	@SuppressWarnings("unchecked")
 	private void fillData(Uri uri) {
 		String[] projection = { TodosTable.COLUMN_DESCRIPTION, TodosTable.COLUMN_DUEDATE, TodosTable.COLUMN_PRIORITY, TodosTable.COLUMN_STATUS };
@@ -90,7 +93,7 @@ public class TodoCreateEditActivity extends Activity implements OnClickListener 
 			statusDropdownPosition = statusAdapter.getPosition(currentStatus); //
 			statusDropdown.setSelection(statusDropdownPosition);
 
-			// Always close the cursor
+			// Close the cursor
 			cursor.close();
 		}
 	}
@@ -107,23 +110,22 @@ public class TodoCreateEditActivity extends Activity implements OnClickListener 
 		String date = dateView.getText().toString();
 		String priority = (String) priorityDropdown.getSelectedItem();
 		String status = (String) statusDropdown.getSelectedItem();
-
-		// Add simple validation
-		if (description.length() == 0 ) {
-			return;
-		}
-
 		ContentValues values = new ContentValues();
+		
 		values.put(TodosTable.COLUMN_DESCRIPTION, description);
 		values.put(TodosTable.COLUMN_DUEDATE, date);
 		values.put(TodosTable.COLUMN_PRIORITY, priority);
 		values.put(TodosTable.COLUMN_STATUS, status);
 
+		// Add simple validation
+		if (description.length() == 0 ) {
+			return;
+		}
 		if (taskUri == null) {
-			// New task
+			// New todo
 			taskUri = getContentResolver().insert(TodoContentProvider.CONTENT_URI, values);
 		} else {
-			// Update task
+			// Edit todo
 			getContentResolver().update(taskUri, values, null, null);
 		}
 	}
@@ -131,7 +133,8 @@ public class TodoCreateEditActivity extends Activity implements OnClickListener 
 	@SuppressLint("DefaultLocale")
 	private void makeToast(String field) {
 		Toast.makeText(TodoCreateEditActivity.this, "Field " + field + " can't be empty",
-				Toast.LENGTH_LONG).show();
+				Toast.LENGTH_LONG)
+			 .show();
 	}
 	/**
 	 * On Click Listeners 
@@ -143,7 +146,6 @@ public class TodoCreateEditActivity extends Activity implements OnClickListener 
 		//Adding validation
 		//All fields are required
 		case R.id.todo_edit_button:
-
 			//description
 			if (TextUtils.isEmpty(descText.getText().toString())) {
 				makeToast("description");
@@ -165,18 +167,15 @@ public class TodoCreateEditActivity extends Activity implements OnClickListener 
 			this.finishThis();
 			break;
 		case R.id.todo_edit_time: 
-			DialogFragment newFragment = new DatePickerFragment();
-			//DatePicker dp = newFragment.getDatePicker(); 
-			newFragment.show(getFragmentManager(), "datePicker");
-
+			DialogFragment dp = new DatePickerFragment();
+			dp.show(getFragmentManager(), "datePicker");
 			break;
 		}
-
 	}
 	
-	private boolean finishThis() {
-		this.finish();
-		return true;
+	private void finishThis() {
+		this.onBackPressed();
+		return;
 	}
 } 
 

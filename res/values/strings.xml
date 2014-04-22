@@ -6,8 +6,9 @@
     <string name="hello_world">Hello world!</string>
 	<string name="no_tasks">No tasks saved. Click Insert to add a new task</string>
 	<string name="menu_insert">Add Task</string>
-	<string name="context_menu_delete">Delete Task</string>
-	<string name="context_menu_edit">Edit Task</string>
+	<string name="context_menu_delete">Delete Todo</string>
+	<string name="context_menu_view">View Todo</string>
+	<string name="context_menu_edit">Edit Todo</string>
 	<string name="context_menu_cancel">Cancel</string>
 	<string name="task_edit_hint">Enter task description here&#8230;</string>
 	<string name="task_edit_confirm">Confirm</string>

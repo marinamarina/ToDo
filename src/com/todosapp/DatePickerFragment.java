@@ -20,14 +20,18 @@ implements DatePickerDialog.OnDateSetListener {
 	int year;
 	int month;
 	int day;
+	long currentTimeInMs; 
+	long pastLimitInMs = 1000L; //one second in the past
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
-		// Use the current date as the default date in the picker (depends on the date set in the Android emulator)
+		// Use the current date as the default date in the picker 
+		//(depends on the date set in the Android emulator)
 		c = Calendar.getInstance();
 		year = c.get(Calendar.YEAR);
 		month = c.get(Calendar.MONTH);
-		day = c.get(Calendar.DAY_OF_MONTH); 
+		day = c.get(Calendar.DAY_OF_MONTH);
+		currentTimeInMs = System.currentTimeMillis();
 
 		//Create a new instance of DatePickerDialog and return it
 		return new DatePickerDialog(getActivity(), this, year, month, day);
@@ -37,8 +41,8 @@ implements DatePickerDialog.OnDateSetListener {
 
 		GregorianCalendar calTime = new GregorianCalendar(year, month, day, 0, 0);
 		Date date = calTime.getTime();
-		//set the minimum date
-		view.getCalendarView().setMinDate(c.getTimeInMillis() - 1000);
+		//set the minimum date, substract one second
+		view.getCalendarView().setMinDate(currentTimeInMs - pastLimitInMs);
 		String dateAsString = DateFormat.getDateInstance().format(date);
 		((TextView)(getActivity().findViewById(R.id.todo_edit_time))).setText(dateAsString);		
 	}

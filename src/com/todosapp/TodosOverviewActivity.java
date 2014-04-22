@@ -1,19 +1,23 @@
 package com.todosapp;
 
 import android.annotation.TargetApi;
+import android.app.ActionBar.LayoutParams;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
 import android.app.LoaderManager;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -22,15 +26,17 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.Spinner;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.todosapp.data.TodoCursorAdapter;
 import com.todosapp.data.TodoContentProvider;
 import com.todosapp.data.TodosTable;
 
 /*
- * TasksOverviewActivity displays the existing task items in a list
+ * TodosOverviewActivity displays the existing todo items in a list
  * 
  * You can create new ones via the ActionBar entry "Insert"
  * You can delete / edit existing ones via a long press on the item
@@ -40,8 +46,9 @@ import com.todosapp.data.TodosTable;
 public class TodosOverviewActivity extends ListActivity implements
 LoaderManager.LoaderCallbacks<Cursor> {
 	private static final int DELETE_ID = Menu.FIRST + 1;
-	private static final int EDIT_ID = Menu.FIRST + 2;
-	private static final int CANCEL_ID = Menu.FIRST + 3;
+	private static final int VIEW_ID = Menu.FIRST + 2;
+	private static final int EDIT_ID = Menu.FIRST + 3;
+	private static final int CANCEL_ID = Menu.FIRST + 4;
 	ListView lv;
 
 	private TodoCursorAdapter adapter;
@@ -88,6 +95,7 @@ LoaderManager.LoaderCallbacks<Cursor> {
 			ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
 		menu.add(0, DELETE_ID, 0, R.string.context_menu_delete);
+		menu.add(0, VIEW_ID, 0, R.string.context_menu_view);
 		menu.add(0, EDIT_ID, 0, R.string.context_menu_edit);
 		menu.add(0, CANCEL_ID, 0, R.string.context_menu_cancel);
 
@@ -97,7 +105,7 @@ LoaderManager.LoaderCallbacks<Cursor> {
 	 * Action bar related methods 
 	 */
 	// Insert
-	private void createTask() {
+	private void createTodo() {
 		Intent intent = new Intent(this, TodoCreateEditActivity.class);
 		startActivity(intent);
 	}
@@ -105,7 +113,7 @@ LoaderManager.LoaderCallbacks<Cursor> {
 	//Sort
 	private void sortBy() {  
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("Sort tasks by")
+		builder.setTitle("Sort todos by")
 		.setSingleChoiceItems(R.array.sortBySpinnerItems, -1, new DialogInterface.OnClickListener() {
 
 			public void onClick(DialogInterface dialog, int item) {
@@ -238,7 +246,7 @@ LoaderManager.LoaderCallbacks<Cursor> {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.insert:
-			createTask();
+			createTodo();
 			return true;
 		case R.id.sort:
 			sortBy();
@@ -267,10 +275,16 @@ LoaderManager.LoaderCallbacks<Cursor> {
 			getContentResolver().delete(uri, null, null);
 			restartLoader();
 			return true;
+		case VIEW_ID: 
+			Intent view_intent = new Intent(this, TodoSummaryFragment.class);
+			Uri viewTodoUri = Uri.parse(TodoContentProvider.CONTENT_URI + "/" + info.id);
+			view_intent.putExtra(TodoContentProvider.CONTENT_ITEM_TYPE, viewTodoUri);
+			startActivity(view_intent);
+			return true;
 		case EDIT_ID:
 			Intent intent = new Intent(this, TodoCreateEditActivity.class);
-			Uri taskUri = Uri.parse(TodoContentProvider.CONTENT_URI + "/" + info.id);
-			intent.putExtra(TodoContentProvider.CONTENT_ITEM_TYPE, taskUri);
+			Uri todoUri = Uri.parse(TodoContentProvider.CONTENT_URI + "/" + info.id);
+			intent.putExtra(TodoContentProvider.CONTENT_ITEM_TYPE, todoUri);
 			startActivity(intent);
 			return true;
 		case CANCEL_ID:
