@@ -20,5 +20,6 @@
     <string name="search_hint">Please, search&#8230;</string>
     <string name="cancel">Cancel</string>
     <string name="all">All</string>
+    <string name="back">Back</string>
 	
 </resources>

@@ -69,8 +69,6 @@ public class TodoSummaryFragment extends Activity implements OnClickListener {
 			cursor.close();
 		}
 	}
-
-
 	
 	/**
 	 * On Click Listeners 

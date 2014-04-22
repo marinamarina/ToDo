@@ -40,22 +40,23 @@ public final class R {
         public static final int small_tiles=0x7f020006;
     }
     public static final class id {
-        public static final int all=0x7f0b0014;
+        public static final int TextView01=0x7f0b000f;
+        public static final int all=0x7f0b0015;
         public static final int checkboxView=0x7f0b000b;
         public static final int date=0x7f0b000e;
-        public static final int dismiss=0x7f0b0010;
-        public static final int insert=0x7f0b0011;
+        public static final int insert=0x7f0b0012;
         public static final int label=0x7f0b000c;
-        public static final int search=0x7f0b0013;
+        public static final int search=0x7f0b0014;
         public static final int second_label=0x7f0b000d;
-        public static final int sort=0x7f0b0012;
+        public static final int sort=0x7f0b0013;
         public static final int todo_cancel_button=0x7f0b000a;
         public static final int todo_edit_button=0x7f0b0009;
         public static final int todo_edit_description=0x7f0b0005;
         public static final int todo_edit_priority=0x7f0b0007;
         public static final int todo_edit_status=0x7f0b0008;
         public static final int todo_edit_time=0x7f0b0006;
-        public static final int todo_view_desc=0x7f0b000f;
+        public static final int todo_view_back=0x7f0b0011;
+        public static final int todo_view_desc=0x7f0b0010;
         public static final int todos_search_button=0x7f0b0003;
         public static final int todos_search_cancel_button=0x7f0b0004;
         public static final int todos_search_description=0x7f0b0000;
@@ -76,6 +77,7 @@ public final class R {
         public static final int action_settings=0x7f080001;
         public static final int all=0x7f080012;
         public static final int app_name=0x7f080000;
+        public static final int back=0x7f080013;
         public static final int cancel=0x7f080011;
         public static final int context_menu_cancel=0x7f080008;
         public static final int context_menu_delete=0x7f080005;
