@@ -27,9 +27,6 @@
         <activity
             android:name="com.todosapp.TodoCreateEditActivity">
         </activity>
-         <activity
-            android:name="com.todosapp.TodoSummaryFragment">
-        </activity>
   		<provider
 		    android:authorities="com.todosapp.contentprovider"
       		android:name="com.todosapp.data.TodoContentProvider"

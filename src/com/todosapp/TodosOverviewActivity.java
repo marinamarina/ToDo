@@ -2,6 +2,7 @@ package com.todosapp;
 
 import android.annotation.TargetApi;
 import android.app.ActionBar.LayoutParams;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
@@ -12,11 +13,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,11 +29,14 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.todosapp.data.TodoCursorAdapter;
 import com.todosapp.data.TodoContentProvider;
@@ -45,9 +52,9 @@ import com.todosapp.data.TodosTable;
 @TargetApi(19)
 public class TodosOverviewActivity extends ListActivity implements
 LoaderManager.LoaderCallbacks<Cursor> {
-	private static final int DELETE_ID = Menu.FIRST + 1;
-	private static final int VIEW_ID = Menu.FIRST + 2;
-	private static final int EDIT_ID = Menu.FIRST + 3;
+	private static final int VIEW_ID = Menu.FIRST + 1;
+	private static final int EDIT_ID = Menu.FIRST + 2;
+	private static final int DELETE_ID = Menu.FIRST + 3;
 	private static final int CANCEL_ID = Menu.FIRST + 4;
 	ListView lv;
 
@@ -57,13 +64,14 @@ LoaderManager.LoaderCallbacks<Cursor> {
 	//the current cursor will be swapped for the search cursor, if user did a search
 	public static Cursor searchCursor=null;
 	//search cursor related fields
-	String searchByDescription = "";
-	String searchByPriority = "";
-	String searchByStatus = "";
-	Uri uri = TodoContentProvider.CONTENT_URI;
-	String[] projection = { TodosTable.COLUMN_ID, TodosTable.COLUMN_DESCRIPTION, TodosTable.COLUMN_DUEDATE, TodosTable.COLUMN_PRIORITY, TodosTable.COLUMN_STATUS};
-	String  selection = "";
-	String selectionArgs[] = new String[1];
+	private String searchByDescription = "";
+	private String searchByPriority = "";
+	private String searchByStatus = "";
+	private Uri uri = TodoContentProvider.CONTENT_URI;
+	private String[] projection = { TodosTable.COLUMN_ID, TodosTable.COLUMN_DESCRIPTION, TodosTable.COLUMN_DUEDATE, TodosTable.COLUMN_PRIORITY, TodosTable.COLUMN_STATUS};
+	private String  selection = "";
+	private String selectionArgs[] = new String[1];
+
 
 	/** 
 	 * Called when the activity is first created.
@@ -94,9 +102,9 @@ LoaderManager.LoaderCallbacks<Cursor> {
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
-		menu.add(0, DELETE_ID, 0, R.string.context_menu_delete);
 		menu.add(0, VIEW_ID, 0, R.string.context_menu_view);
 		menu.add(0, EDIT_ID, 0, R.string.context_menu_edit);
+		menu.add(0, DELETE_ID, 0, R.string.context_menu_delete);
 		menu.add(0, CANCEL_ID, 0, R.string.context_menu_cancel);
 
 	}
@@ -268,24 +276,29 @@ LoaderManager.LoaderCallbacks<Cursor> {
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
 				.getMenuInfo();
 		switch (item.getItemId()) {
-		case DELETE_ID:
-			Uri uri = Uri.parse(TodoContentProvider.CONTENT_URI + "/"
-					+ info.id);
-
-			getContentResolver().delete(uri, null, null);
-			restartLoader();
-			return true;
 		case VIEW_ID: 
-			Intent view_intent = new Intent(this, TodoSummaryFragment.class);
+			
 			Uri viewTodoUri = Uri.parse(TodoContentProvider.CONTENT_URI + "/" + info.id);
-			view_intent.putExtra(TodoContentProvider.CONTENT_ITEM_TYPE, viewTodoUri);
-			startActivity(view_intent);
+			//view_intent.putExtra(TodoContentProvider.CONTENT_ITEM_TYPE, viewTodoUri);
+			//startActivity(view_intent);
+			TodoViewPopupWindow pw = new TodoViewPopupWindow(getApplicationContext(), this, viewTodoUri);
+			//Bundle data = new Bundle();
+			//data.putParcelable("name", viewTodoUri);
+			
+			pw.showPopUp();
 			return true;
 		case EDIT_ID:
 			Intent intent = new Intent(this, TodoCreateEditActivity.class);
 			Uri todoUri = Uri.parse(TodoContentProvider.CONTENT_URI + "/" + info.id);
 			intent.putExtra(TodoContentProvider.CONTENT_ITEM_TYPE, todoUri);
 			startActivity(intent);
+			return true;
+		case DELETE_ID:
+			Uri uri = Uri.parse(TodoContentProvider.CONTENT_URI + "/"
+					+ info.id);
+
+			getContentResolver().delete(uri, null, null);
+			restartLoader();
 			return true;
 		case CANCEL_ID:
 			return true;

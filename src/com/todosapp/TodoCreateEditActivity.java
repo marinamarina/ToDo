@@ -52,8 +52,7 @@ public class TodoCreateEditActivity extends Activity implements OnClickListener 
 		Bundle extras = getIntent().getExtras();
 		// check for extra data passed from the other activity
 		if (extras != null) {
-			taskUri = extras
-					.getParcelable(TodoContentProvider.CONTENT_ITEM_TYPE);
+			taskUri = extras.getParcelable(TodoContentProvider.CONTENT_ITEM_TYPE);
 			fillData(taskUri);
 		}
 	}
@@ -62,6 +61,7 @@ public class TodoCreateEditActivity extends Activity implements OnClickListener 
 	 */
 	@SuppressWarnings("unchecked")
 	private void fillData(Uri uri) {
+		//repeating all the time!!
 		String[] projection = { TodosTable.COLUMN_DESCRIPTION, TodosTable.COLUMN_DUEDATE, TodosTable.COLUMN_PRIORITY, TodosTable.COLUMN_STATUS };
 		Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
 		String currentPriority;

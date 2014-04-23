@@ -10,7 +10,7 @@
 	<string name="context_menu_view">View Todo</string>
 	<string name="context_menu_edit">Edit Todo</string>
 	<string name="context_menu_cancel">Cancel</string>
-	<string name="task_edit_hint">Enter task description here&#8230;</string>
+	<string name="task_edit_hint">What needs to be done?</string>
 	<string name="task_edit_confirm">Confirm</string>
 	<string name="due_date_hint">Choose a due date</string>
 	<string name="todo">TODO</string>
@@ -21,5 +21,10 @@
     <string name="cancel">Cancel</string>
     <string name="all">All</string>
     <string name="back">Back</string>
+    <string name="view_what">What</string>
+    <string name="view_when">When</string>
+    <string name="view_priority">Important?</string>
+    <string name="view_status">Status</string>
+    <string name="view_title">Todo summary:</string>
 	
 </resources>
