@@ -77,9 +77,10 @@ public class TodoCursorAdapter extends CursorAdapter {
 		}
 		
 		//Feeding the date field
-		todoDate=todoDate.substring(0, todoDate.indexOf(','));;
-		//Log.w("LISI", todoDate)
-		dateView.setText(todoDate);
+		if(todoDate!=""){
+			todoDate=todoDate.substring(0, todoDate.indexOf(','));;
+			dateView.setText(todoDate);
+		}
 		
 		//Feeding the second text view with the data 
 		//depending on a sort order

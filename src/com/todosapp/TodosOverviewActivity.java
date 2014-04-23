@@ -5,6 +5,8 @@ import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.DialogFragment;
+import android.app.FragmentManager;
 import android.app.ListActivity;
 import android.app.LoaderManager;
 import android.content.Context;
@@ -114,8 +116,8 @@ LoaderManager.LoaderCallbacks<Cursor> {
 	 */
 	// Insert
 	private void createTodo() {
-		Intent intent = new Intent(this, TodoCreateEditActivity.class);
-		startActivity(intent);
+		DialogFragment newFragment = TodoInsertEditDialogFragment.newInstance();
+	    newFragment.show(getFragmentManager(), "insert dialog");
 	}
 
 	//Sort
@@ -288,10 +290,7 @@ LoaderManager.LoaderCallbacks<Cursor> {
 			pw.showPopUp();
 			return true;
 		case EDIT_ID:
-			Intent intent = new Intent(this, TodoCreateEditActivity.class);
-			Uri todoUri = Uri.parse(TodoContentProvider.CONTENT_URI + "/" + info.id);
-			intent.putExtra(TodoContentProvider.CONTENT_ITEM_TYPE, todoUri);
-			startActivity(intent);
+
 			return true;
 		case DELETE_ID:
 			Uri uri = Uri.parse(TodoContentProvider.CONTENT_URI + "/"
